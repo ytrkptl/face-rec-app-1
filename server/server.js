@@ -28,7 +28,7 @@ if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 const db = knex({
   client: 'pg',
   connection: {
-    connectionString : process.env.DATABASE_URL,
+    connectionString: process.env.DATABASE_URL,
     ssl: true
   }
 });
@@ -36,12 +36,27 @@ const db = knex({
 const app = express();
 
 app.use(morgan('combined'));
-app.use(cors('*'))
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors())
+
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../client/build')));
+
+  app.get('*', function (req, res) {
+    res.sendFile(path.join(__dirname, '../client/build', 'index.html'))
+  });
+}
+
+app.listen(process.env.PORT, error => {
+  if (error) throw error;
+  console.log('Server running on port ' + process.env.PORT);
+})
 
 app.get('/favicon.ico', (req, res) => res.status(204));
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.redirect(`${process.env.FRONTEND_URL}`)
 });
 app.post('/signin', signin.signinAuthentication(db, bcrypt))
 app.post('/register-step-1', (req, res) => registerStepOne.handleRegisterWithEmail(db, bcrypt, req, res))
@@ -51,10 +66,9 @@ app.post('/forgot', (req, res) => { forgot.handleForgotPassword(db, req, res) })
 app.post('/reset', (req, res) => { reset.handleResetId(req, res) })
 app.post('/update-new-password', (req, res) => { updateNewPassword.handleUpdateNewPassword(req, res, db, bcrypt) })
 app.get('/profile/:id', auth.requireAuth, (req, res) => { profile.handleProfileGet(req, res, db) })
-app.post('/profile/:id', auth.requireAuth, (req, res) => { profile.handleProfileUpdate(req, res, db)})
-app.post('/upload/:id', auth.requireAuth, (req, res) => { profile.handleProfilePhoto(req, res, db)})
+app.post('/profile/:id', auth.requireAuth, (req, res) => { profile.handleProfileUpdate(req, res, db) })
+app.post('/upload/:id', auth.requireAuth, (req, res) => { profile.handleProfilePhoto(req, res, db) })
 app.put(('/image'), auth.requireAuth, (req, res) => { image.handleImage(req, res, db) })
 app.post('/imageurl', auth.requireAuth, (req, res) => { image.handleApiCall(req, res) })
-app.delete('/signout', (req, res) => {signout.removeAuthToken(req, res)})
-app.post('/subscribe', (req, res) => { subscribe.handleSubscribe(req, res)})
-app.listen(process.env.PORT, () => console.log(`app is running on port ${process.env.PORT}`))
+app.delete('/signout', (req, res) => { signout.removeAuthToken(req, res) })
+app.post('/subscribe', (req, res) => { subscribe.handleSubscribe(req, res) })

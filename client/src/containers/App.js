@@ -107,7 +107,7 @@ class App extends Component {
   }
 
   calculateFaceLocations = (data) => {
-    if (data && data.outputs) {
+    if (data && data.outputs && data.outputs[0].data && data.outputs[0].data.regions) {
       const image = document.getElementById('inputimage');
       const width = Number(image.width);
       const height = Number(image.height);
