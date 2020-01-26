@@ -16,7 +16,8 @@
     "build": "cd client && npm run build",
     "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
     "start": "npm run dev",
-    "heroku-postbuild": "npm install && (cd server && npm install && npm start) && (cd ..) && (cd client && npm install && npm run build)"
+    "start:prod": "(cd server && npm start)",
+    "heroku-postbuild": "npm install && (cd server && npm install) && (cd ..) && (cd client && npm install) && (cd ..) && (npm start:prod && cd .. && npm run build)"
   },
   "keywords": [],
   "author": "",
