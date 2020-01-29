@@ -34,6 +34,7 @@ const db = knex({
 });
 
 const app = express();
+const port = process.env.PORT || 5000;
 
 app.use(morgan('combined'));
 app.use(bodyParser.json());
@@ -49,9 +50,9 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-app.listen(process.env.PORT, error => {
+app.listen(port, error => {
   if (error) throw error;
-  console.log('Server running on port ' + process.env.PORT);
+  console.log('Server running on port ' + port);
 })
 
 app.get('/favicon.ico', (req, res) => res.status(204));
@@ -68,7 +69,7 @@ app.post('/update-new-password', (req, res) => { updateNewPassword.handleUpdateN
 app.get('/profile/:id', auth.requireAuth, (req, res) => { profile.handleProfileGet(req, res, db) })
 app.post('/profile/:id', auth.requireAuth, (req, res) => { profile.handleProfileUpdate(req, res, db) })
 app.post('/upload/:id', auth.requireAuth, (req, res) => { profile.handleProfilePhoto(req, res, db) })
-app.put(('/image'), auth.requireAuth, (req, res) => { image.handleImage(req, res, db) })
+app.put('/image', auth.requireAuth, (req, res) => { image.handleImage(req, res, db) })
 app.post('/imageurl', auth.requireAuth, (req, res) => { image.handleApiCall(req, res) })
 app.delete('/signout', (req, res) => { signout.removeAuthToken(req, res) })
 app.post('/subscribe', (req, res) => { subscribe.handleSubscribe(req, res) })

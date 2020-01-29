@@ -117,7 +117,7 @@ class Signin extends React.Component {
       }
     if (!this.state.showEmailError && !this.state.showPasswordError && this.state.signInEmail!=='' && this.state.signInPassword!=='') {
       this.setState({showSpinner: true})
-      fetch(`${process.env.REACT_APP_ENDPOINT_URL}/signin`, {
+      fetch(`/signin`, {
         method: 'post',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
