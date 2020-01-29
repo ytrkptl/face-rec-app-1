@@ -53,7 +53,6 @@ class App extends Component {
 
   componentDidMount() {
     const token = window.sessionStorage.getItem('token');
-    console.log(token)
     if (token) {
       fetch(`${process.env.REACT_APP_ENDPOINT_URL}/signin`, {
         method: 'POST',
