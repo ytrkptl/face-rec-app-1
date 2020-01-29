@@ -6,11 +6,12 @@
 .gridCol1 {
 	max-width: 50%;
 }
+/* the below only applies for home page */
 .gridCol2 {
 	display: flex;
 	justify-content: flex-end;
 	align-items: flex-start;
-	width: 100%;
+	width: 50%;
 	min-width: 64px;
 	padding-top: 32px;
 	padding-right: 32px;
@@ -21,14 +22,16 @@
 	grid-template-columns: 6fr 6fr;
 }
 
+/* the below only applies for sign in page */
 .divInNav {
 	display: flex;
 	justify-content: flex-end;
 	align-items: flex-start;
-	width: 100%;
+	width: 50%;
 	padding-top: 22px;
 	padding-right: 20px;
 }
+
 .customLink {
 	font-size: 1.5rem;
 	color: black;

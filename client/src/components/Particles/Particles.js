@@ -1,9 +1,8 @@
 import React from 'react';
 import Particles from 'react-particles-js';
-import Drop from './droplet.jpg';
 
-const ParticlesComponent = ({lightningOn}) =>  {
-  
+const ParticlesComponent = ({ lightningOn }) => {
+
   let particlesOptions = {
     particles: {
       number: {
@@ -16,7 +15,7 @@ const ParticlesComponent = ({lightningOn}) =>  {
       shape: {
         type: "image",
         image: {
-          src: `${Drop}`,
+          src: `https://res.cloudinary.com/dun1b4fpw/image/upload/s--xuSqPQTh--/c_scale,f_auto,q_auto,w_32/v1580263176/face-rec-app-1/droplet.png`,
         }
       },
       size: {
@@ -35,7 +34,7 @@ const ParticlesComponent = ({lightningOn}) =>  {
     },
   }
   return (
-    lightningOn===true &&
+    lightningOn === true &&
     <Particles className='particles'
       params={particlesOptions}
     />
