@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { RemoveScroll } from 'react-remove-scroll';
 import ParticlesComponent from '../components/Particles/Particles';
 import Navigation from '../components/Navigation/Navigation';
 import FaceRecognition from '../components/FaceRecognition/FaceRecognition';
@@ -277,14 +278,16 @@ class App extends Component {
         />
         {isProfileOpen &&
           <Modal>
-            <Profile
-              isProfileOpen={isProfileOpen}
-              toggleModal={this.toggleModal}
-              loadUser={this.loadUser}
-              profilePhotoUrl={profilePhotoUrl}
-              changeProfileImage={this.changeProfileImage}
-              client={client}
-              user={user} />
+            <RemoveScroll>
+              <Profile
+                isProfileOpen={isProfileOpen}
+                toggleModal={this.toggleModal}
+                loadUser={this.loadUser}
+                profilePhotoUrl={profilePhotoUrl}
+                changeProfileImage={this.changeProfileImage}
+                client={client}
+                user={user} />
+            </RemoveScroll>
           </Modal>
         }
         <div className="row2">

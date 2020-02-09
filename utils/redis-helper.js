@@ -1,5 +1,3 @@
-if (process.env.NODE_ENV !== 'production') require('dotenv').config();
-
 // Redis Setup
 const redis = require('redis');
 
@@ -10,13 +8,13 @@ const setToken = (key, value) => Promise.resolve(redisClient.set(key, value));
 
 const getToken = key => {
   return new Promise((resolve, reject) => {
-    redisClient.get(key, function(error, result) {
+    redisClient.get(key, function (error, result) {
       if (error) {
         reject()
       }
       resolve(result)
     })
-  }).catch(err=>console.log(err + ' from redisHelper.js line 19'))
+  }).catch(err => console.log(err + ' from redisHelper.js line 19'))
 }
 
 const deleteToken = (key) => Promise.resolve(redisClient.del(key));
@@ -25,17 +23,17 @@ const deleteToken = (key) => Promise.resolve(redisClient.del(key));
 const keyExists = (key) => {
   return new Promise((resolve, reject) => {
     redisClient.exists(key, function (error, result) {
-    if (error) {
-      reject(error)
-    }
-    resolve(result)
+      if (error) {
+        reject(error)
+      }
+      resolve(result)
     });
   })
 }
 
 // the function below will output all keys from redis that match the argument 'key',
 // whose default value is '*', which return all keys from redis
-const viewAll = (key='*')=> redisClient.keys(key, function (error, result) {
+const viewAll = (key = '*') => redisClient.keys(key, function (error, result) {
   if (error) {
     throw error;
   }
@@ -44,18 +42,19 @@ const viewAll = (key='*')=> redisClient.keys(key, function (error, result) {
 
 // the function below will remove all data from redis database
 const flushAllFromRedis = () => redisClient.flushdb(function (err, succeeded) {
-    console.log(succeeded); // will be true if successfull
+  console.log(succeeded); // will be true if successfull
 });
 
 const getMultipleValues = (key1, key2, key3, key4) => {
   return new Promise((resolve, reject) => {
     redisClient.mget(key1, key2, key3, key4, function (error, result) {
-    if (error) {
-      reject(error);
-    }
-    resolve(result);
+      if (error) {
+        reject(error);
+      }
+      resolve(result);
+    })
   })
-})}
+}
 
 const setMultipleValuesWithEx = (someKeys, someVals) => {
   return new Promise((resolve, reject) => {
@@ -65,8 +64,8 @@ const setMultipleValuesWithEx = (someKeys, someVals) => {
       let uniqueKey = someVals[0] + ' ';
       let a = redisClient.multi();
       // a.get()
-      for(let i = 0; i< someKeys.length; i++) {
-        if(i===2) {
+      for (let i = 0; i < someKeys.length; i++) {
+        if (i === 2) {
           a.set(someKeys[i], someVals[i])
           a.expire(someKeys[i], 3600)
         } else {
@@ -76,8 +75,8 @@ const setMultipleValuesWithEx = (someKeys, someVals) => {
       }
 
       a.exec();
-      
-    } catch(e) {
+
+    } catch (e) {
       reject(false)
     }
     resolve(true)
