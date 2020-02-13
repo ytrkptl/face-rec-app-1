@@ -29,7 +29,8 @@
 	align-items: flex-start;
 	padding-top: 22px;
 	padding-right: 20px;
-	width: 50%;
+	/* remove below line for heroku prod */
+	/* width: 50%; */
 }
 
 .customLink {
