@@ -41,7 +41,9 @@ class Profile extends React.Component {
 				this.props.toggleModal();
 				this.props.loadUser({ ...this.props.user, ...data });
 			}
-		}).catch(e => console.log(e))
+		}).catch(e => {
+			console.log(`error updating user profile`)
+		})
 	}
 
 	triggerPhotoChange = () => {
@@ -65,7 +67,7 @@ class Profile extends React.Component {
 						let url = resp.url;
 						this.props.changeProfileImage(url, HANDLE);
 					})
-					.catch(err => console.log(err))
+					.catch(err => console.log(`error uploading photo`))
 			}
 		}
 	}
@@ -85,7 +87,7 @@ class Profile extends React.Component {
 								alt="avatar" />
 							<button className="changePhotoButton" onClick={() => this.triggerPhotoChange()}>Change Profile Photo</button>
 						</div>
-						<h1>{this.state.name}</h1>
+						<h1>{user.name}</h1>
 						<h4>{`Images Submitted: ${user.entries}`}</h4>
 						<p>{`Member since: ${new Date(user.joined).toLocaleDateString()}`}</p>
 						<hr />

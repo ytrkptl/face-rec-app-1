@@ -2,7 +2,7 @@ const redisHelper = require('../../utils/redis-helper');
 const handleSendingEmail = require('../send-email-forgot').handleSendingEmail;
 
 const uuidv4 = () => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16);
   });
@@ -19,25 +19,25 @@ const handleForgotPassword = async (db, req, res) => {
   const { yourEmail } = req.body;
 
   if (!yourEmail) {
-     return Promise.reject('Please fill out a valid email address.');
+    return Promise.reject('Please fill out a valid email address.');
   }
-  
+
   db.select('id', 'email').from('users')
-    .where({'email': yourEmail})
+    .where({ 'email': yourEmail })
     .then(user => {
       if (user[0].id) {
         const randomId = uuidv4();
         redisHelper.setToken(yourEmail, randomId)
-        .then(check=>{
-          if (check===true) {
-            handleSendingEmail(randomId, req, res)
-          } else {
-            throw new Error
-          }
-        })
-        .catch(err=>{
-          console.log('Something went wrong in step forgot step 1 ' + err)
-        })
+          .then(check => {
+            if (check === true) {
+              handleSendingEmail(randomId, req, res)
+            } else {
+              throw new Error
+            }
+          })
+          .catch(err => {
+            console.log('Something went wrong in step forgot step 1 line 39')
+          })
         return res.status(200).json('Please check your email and enter the code provided in the box below')
       }
     })
@@ -47,5 +47,5 @@ const handleForgotPassword = async (db, req, res) => {
 }
 
 module.exports = {
-  handleForgotPassword: handleForgotPassword
+  handleForgotPassword
 }

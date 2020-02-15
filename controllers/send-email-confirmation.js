@@ -8,7 +8,7 @@ if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 // am using MailThis.to, FormSubmit, FormSpree, etc. instead.
 
 const handleSendingEmailConfirmation = (someToken, req, res) => {
-  
+
   const { email } = req.body;
   let transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -23,7 +23,7 @@ const handleSendingEmailConfirmation = (someToken, req, res) => {
     //only using my email to send to
     to: `${email}`,
     // Subject line
-    subject: `Yatrik's Face Recognition App - Confirmation`, 
+    subject: `Yatrik's Face Recognition App - Confirmation`,
     // plain text bodynpm 
     // text: 'Hello world?', 
     // don't allow sending html below
@@ -55,7 +55,7 @@ const handleSendingEmailConfirmation = (someToken, req, res) => {
     </body>
 `};
 
-  transporter.sendMail(mailOptions, function(error, info){
+  transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       return res.status(400).send(`Something went wrong. Please use the following email
         address to contact us about this issue: ${process.env.USER_EMAIL_ID_TO_SHOW}`);
@@ -67,5 +67,5 @@ const handleSendingEmailConfirmation = (someToken, req, res) => {
 }
 
 module.exports = {
-  handleSendingEmailConfirmation: handleSendingEmailConfirmation
+  handleSendingEmailConfirmation
 }

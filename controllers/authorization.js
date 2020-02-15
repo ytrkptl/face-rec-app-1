@@ -1,22 +1,18 @@
-const redisHelper = require('../utils/redis-helper').redisClient;
+const redisHelper = require('../utils/redis-helper');
 
 const requireAuth = (req, res, next) => {
   const { authorization } = req.headers;
-  if(!authorization) {
+  if (!authorization) {
     return res.status(401).json('Unauthorized');
   }
- 
-  return new Promise((resolve, reject) => {
-    
-    redisHelper.get(authorization, function(error, result) {
-      if (error || !result) {
-        reject(res.status(401).json('Unauthorized'))
-      }
-      resolve(next())
+
+  return redisHelper.getToken(authorization)
+    .then(next())
+    .catch(e => {
+      return res.status(401).json('Unauthorized')
     })
-  }).catch(err=>console.log(err + ' in authorization.js'))
 }
 
 module.exports = {
-  requireAuth: requireAuth
+  requireAuth
 }

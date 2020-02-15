@@ -1,11 +1,9 @@
 const jwt = require('jsonwebtoken');
-if (process.env.NODE_ENV !== 'production') require('dotenv').config();
-
 const redisHelper = require('../utils/redis-helper');
 
 const signToken = (username) => {
   const jwtPayload = { username };
-  return jwt.sign(jwtPayload, 'JWT_SECRET_KEY', { expiresIn: '2 days'});
+  return jwt.sign(jwtPayload, 'JWT_SECRET_KEY', { expiresIn: '2 days' });
 };
 
 const createSession = (user) => {
@@ -41,25 +39,26 @@ const handleSignin = (db, bcrypt, req, res) => {
 
 const getAuthTokenId = (req, res) => {
   const { authorization } = req.headers;
-  return redisHelper.getToken(authorization, (err, reply) => {
-    if (err || !reply) {
-      return res.status(401).send('Unauthorized');
-    }
-    return res.json({id: reply})
-  });
+  return redisHelper.getToken(authorization)
+    .then(reply => {
+      return res.status(200).json({ id: reply })
+    })
+    .catch(e => {
+      return res.status(401).json('Unauthorized')
+    })
 }
 
 const signinAuthentication = (db, bcrypt) => (req, res) => {
   const { authorization } = req.headers;
   return authorization ? getAuthTokenId(req, res)
     : handleSignin(db, bcrypt, req, res)
-    .then(data =>
-      data.id && data.email ? createSession(data) : Promise.reject(data))
-    .then(session => res.json(session))
-    .catch(err => res.status(400).json(err));
+      .then(data =>
+        data.id && data.email ? createSession(data) : Promise.reject(data))
+      .then(session => res.json(session))
+      .catch(err => res.status(400).json(err));
 }
 
 module.exports = {
-  signinAuthentication: signinAuthentication,
-  jwt: jwt
+  signinAuthentication,
+  jwt
 }
