@@ -23,7 +23,7 @@ const handleSendingEmail = (someToken, req, res) => {
     //only using my email to send to
     to: `${yourEmail}`,
     // Subject line
-    subject: `Yatrik's Face Recognition App - Forgot Password Step 1`, 
+    subject: `Yatrik's Face Recognition App - Forgot Password Step 1`,
     // plain text body
     // text: 'Hello world?', 
     // don't allow sending html below
@@ -56,7 +56,7 @@ const handleSendingEmail = (someToken, req, res) => {
       </table>
 `};
 
-  transporter.sendMail(mailOptions, function(error, info){
+  transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       return res.status(400).send(`Something went wrong. Please use the following email
         address to send Yatrik an email: ${process.env.USER_EMAIL_ID_TO_SHOW}`);
@@ -68,5 +68,5 @@ const handleSendingEmail = (someToken, req, res) => {
 }
 
 module.exports = {
-  handleSendingEmail: handleSendingEmail
+  handleSendingEmail
 }

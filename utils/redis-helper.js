@@ -4,8 +4,31 @@ const redis = require('redis');
 // You will want to update your host to the proper address in production
 const redisClient = redis.createClient(process.env.REDIS_URL);
 
-const setToken = (key, value) => Promise.resolve(redisClient.set(key, value));
+// use the following function to set a key value pair in redis
+const setToken = (key, value) => {
+  return new Promise((resolve, reject) => {
+    redisClient.set(key, value, function (error, result) {
+      if (error) {
+        reject()
+      }
+      resolve(result)
+    })
+  }).catch(err => console.log(err + ' error occurred while running setToken in redisHelper'))
+}
 
+// use the following function to set a key value pair with expiration time instead
+const setTokenWithEx = (key, expirationTime, value) => {
+  return new Promise((resolve, reject) => {
+    redisClient.setex(key, expirationTime, value, function (error, result) {
+      if (error) {
+        reject()
+      }
+      resolve(result)
+    })
+  }).catch(err => console.log(err + ' error occurred while running setTokenWithEx in redisHelper'))
+}
+
+// use the following function to get a single key's value
 const getToken = key => {
   return new Promise((resolve, reject) => {
     redisClient.get(key, function (error, result) {
@@ -14,10 +37,33 @@ const getToken = key => {
       }
       resolve(result)
     })
-  }).catch(err => console.log(err + ' from redisHelper.js line 19'))
+  }).catch(err => console.log(err + ' error occurred while running getToken in redisHelper'))
 }
 
-const deleteToken = (key) => Promise.resolve(redisClient.del(key));
+// use the following function to get multiple keys' values instead
+const getMultipleValues = (key1, key2, key3, key4) => {
+  return new Promise((resolve, reject) => {
+    redisClient.mget(key1, key2, key3, key4, function (error, result) {
+      if (error) {
+        reject(error);
+      }
+      resolve(result);
+    })
+  }).catch(err => console.log(err + ' error occurred while running getMultipleValues in redisHelper'))
+}
+
+
+// use the following function to delete a key
+const deleteToken = key => {
+  return new Promise((resolve, reject) => {
+    redisClient.del(key, function (error, result) {
+      if (error) {
+        reject()
+      }
+      resolve(result)
+    })
+  }).catch(err => console.log(err + ' error occurred while running deleteToken in redisHelper'))
+}
 
 // this will check if the provided key already exists
 const keyExists = (key) => {
@@ -28,34 +74,49 @@ const keyExists = (key) => {
       }
       resolve(result)
     });
-  })
+  }).catch(err => console.log(err + ' error occurred while running keyExists in redisHelper'))
 }
 
 // the function below will output all keys from redis that match the argument 'key',
 // whose default value is '*', which return all keys from redis
-const viewAll = (key = '*') => redisClient.keys(key, function (error, result) {
-  if (error) {
-    throw error;
-  }
-  return result;
-});
-
-// the function below will remove all data from redis database
-const flushAllFromRedis = () => redisClient.flushdb(function (err, succeeded) {
-  console.log(succeeded); // will be true if successfull
-});
-
-const getMultipleValues = (key1, key2, key3, key4) => {
+const viewAll = (key = '*') => {
   return new Promise((resolve, reject) => {
-    redisClient.mget(key1, key2, key3, key4, function (error, result) {
+    redisClient.keys(key, function (error, result) {
       if (error) {
-        reject(error);
+        reject(error)
       }
-      resolve(result);
-    })
-  })
+      resolve(result)
+    });
+  }).catch(err => console.log(err + ' error occurred while running viewAll in redisHelper'))
 }
 
+// the function below will remove all data from redis database
+const flushAllFromRedis = () => {
+  return new Promise((resolve, reject) => {
+    redisClient.flushdb(function (error, result) {
+      if (error) {
+        reject(error)
+      }
+      resolve(result)
+    });
+  }).catch(err => console.log(err + ' error occurred while running flushdb in redisHelper'))
+}
+
+// increments a key's value
+const incrementValue = (key) => {
+  return new Promise((resolve, reject) => {
+    redisClient.incr(key, function (error, result) {
+      if (error) {
+        reject(error)
+      }
+      resolve(result)
+    });
+  }).catch(err => console.log(err + ' error occurred while running incrementValue in redisHelper'))
+}
+
+// use the following function to set multiple keys and values with expiration time
+// this function is specific to the logic of this app, therefore the if then statements
+// below. You may want to consider using a separate multi app.
 const setMultipleValuesWithEx = (someKeys, someVals) => {
   return new Promise((resolve, reject) => {
 
@@ -84,13 +145,14 @@ const setMultipleValuesWithEx = (someKeys, someVals) => {
 }
 
 module.exports = {
-  redisClient: redisClient,
-  getToken: getToken,
-  setToken: setToken,
-  deleteToken: deleteToken,
-  keyExists: keyExists,
-  getMultipleValues: getMultipleValues,
-  setMultipleValuesWithEx: setMultipleValuesWithEx,
-  viewAll: viewAll,
-  flushAllFromRedis: flushAllFromRedis
+  getToken,
+  setToken,
+  setTokenWithEx,
+  deleteToken,
+  keyExists,
+  getMultipleValues,
+  setMultipleValuesWithEx,
+  incrementValue,
+  viewAll,
+  flushAllFromRedis
 }

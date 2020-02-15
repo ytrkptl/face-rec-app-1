@@ -64,7 +64,6 @@ class App extends Component {
       })
         .then(resp => resp.json())
         .then(data => {
-          console.log(data && data.id)
           if (data && data.id) {
             fetch(`/profile/${data.id}`, {
               method: 'GET',
@@ -175,7 +174,7 @@ class App extends Component {
         }
         this.displayFaceBox(this.calculateFaceLocations(response))
       })
-      .catch(err => console.log(err));
+      .catch(err => console.log(`error upon submit button in App.js line 177`));
   }
 
   onRouteChange = (route) => {
@@ -183,9 +182,9 @@ class App extends Component {
       this.setState(initialState)
       // removeAuthTokenFromSession will remove the 
       // token from the browser,
-      // however we may also need to remove it from redis in backend
+      // however we also need to remove it from redis in backend
       // therefore the below fetch function, which removes it from
-      // redis first and then call the removeAuthTokenFromSession func
+      // redis first and then calls the removeAuthTokenFromSession func
       // above
       fetch(`/signout`, {
         method: 'DELETE',
@@ -200,7 +199,7 @@ class App extends Component {
             this.removeAuthTokenFromSession('token');
           }
         })
-        .catch(error => console.log(error))
+        .catch(error => console.log(`error onRouteChange in App.js line 202`))
       return
     } else if (route === 'home') {
       this.setState({ isSignedIn: true })
@@ -247,7 +246,7 @@ class App extends Component {
             })
         }
       })
-      .catch(err => console.log(err))
+      .catch(err => console.log(`error running changeProfileImage in App.js line 249`))
   }
 
   showLightning = () => {
