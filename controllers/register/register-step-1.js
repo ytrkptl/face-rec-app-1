@@ -2,12 +2,15 @@ const redisHelper = require('../../utils/redis-helper');
 const handleSendingEmailConfirmation = require('../send-email-confirmation').handleSendingEmailConfirmation;
 const randomIdFunc = require('../../utils/other-helper').getUuidv4;
 
+let messageToSend = `If the email address you provided is valid, you should've received a code in an email from us. Please check your email and enter that code below.`
+
+
 /* This method checks to see if name, email, and password are provided first, then it
 checks to see if that email exists in database. If yes, sends the user
 an email with a confirmationId and a success status of 200. If no, sends the users
 no emails but still with a success status of 200. This will keep anyone from 
 figuring out what emails exist in our database */
-const handleRegisterWithEmail = async (db, bcrypt, req, res) => {
+const handleRegisterWithEmail = (db, bcrypt, req, res) => {
 
   const { name, email, password } = req.body;
 
@@ -15,52 +18,93 @@ const handleRegisterWithEmail = async (db, bcrypt, req, res) => {
     return res.status(400).json('Please fill out a valid form')
   }
 
-  let messageToSend = `If the email address you provided is valid, you should've received a code in an email from us. Please check your email and enter that code below.`
-
-  db.select('id', 'email').from('users')
+  db.select('id', 'email')
+    .from('users')
     .where({ 'email': email })
     .then(user => {
       if (user[0] === undefined) {
-        const randomId = randomIdFunc();
         let passwordEnc = bcrypt.hashSync(password, 10);
-        let someKeys = ['randomId', 'name', email, 'password', 'email']
-        let someVals = [randomId, name, email, passwordEnc, email]
-        redisHelper.keyExists(email)
-          .then(x => {
-            if (x === 0) {
-              // register only if key does not exist 
-              redisHelper.setMultipleValuesWithEx(someKeys, someVals)
-                .then(check => {
-                  if (check === true) {
-                    handleSendingEmailConfirmation(randomId, req, res)
-                  } else {
-                    Promise.reject('noooo error').catch(err => err)
-                  }
-                })
-                .catch(err => {
-                  Promise.reject('key already exists').catch(err => err)
-                })
-            }
-            else {
-              Promise.reject('key already exists').catch(err => err)
-            }
-          })
-          .catch(err => {
-            return res.status(400).json('An email with confirmation code has already been sent to this email address.')
-          })
-        return res.status(200).json(messageToSend)
+        checkIfEmailExistsInRedis(name, email, passwordEnc, req, res)
       } else {
         throw new Error(messageToSend)
       }
     })
     .catch(err => {
       if (err) {
-        console.log(err)
         return res.status(200).json(messageToSend)
       }
     })
 }
 
+
+/*this function not only checks if email exists in redis but also sends an sets 
+keys and values in redis if it does not exist, otherwise simply sends another email
+to the user if key does exist in redis already up to 5 times.
+the limit is set to 5 to keep anyone from abusing the system by requesting multiple
+emails*/
+const checkIfEmailExistsInRedis = (name, email, passwordEnc, req, res) => {
+  const randomId = randomIdFunc();
+  let someKeys = ['randomId', 'name', email, 'password', 'email', 'requestCount']
+  let someVals = [randomId, name, randomId, passwordEnc, email, 1]
+
+  redisHelper.keyExists(email)
+    .then(x => {
+      // register only if key does not exist, represented by "x" here.
+      if (x === 0) {
+        // this block will only run if key does not exist in redis. x should equal 0 if key does not exist
+        redisHelper.setMultipleValuesWithEx(someKeys, someVals)
+          .then(check => {
+            if (check === true) {
+              handleSendingEmailConfirmation(randomId, req, res)
+            }
+          })
+          .catch(err => {
+            if (err) {
+              res.status(400).json('Internal error #1')
+            }
+          })
+      } else {
+        console.log(`${x} from register-step-1-new.js line 67'`)
+        // if key === 1, then run getRandomIdAndSendEmail function
+        getRandomIdAndSendEmail(req, res)
+      }
+    })
+    .catch((err) => {
+      console.log(`${err} error occurred while running checkIfEmailExistsInRedis in register-step-1-new.js line 73'`)
+      return res.status(200).json(messageToSend)
+    })
+}
+
+
+// the function below finds the randomId assigned to the email and sends email confirmation email
+// again and also increments requestCount by 1 each time. if email request exceeds 5, no new email
+// will be sent.
+const getRandomIdAndSendEmail = (req, res) => {
+  const { email } = req.body;
+  let randomId = ''
+  return redisHelper.getToken(email)
+    .then(someId => {
+      randomId = someId
+      return redisHelper.getToken(`${randomId} requestCount`)
+    })
+    .then(requestCount => {
+      if (requestCount < 5) {
+        redisHelper.incrementValue(`${randomId} requestCount`)
+        return true
+      } else {
+        return false
+      }
+    })
+    .then(val => {
+      val ? handleSendingEmailConfirmation(randomId, req, res)
+        : res.status(400).json('too many requests were made')
+    })
+    .catch(err => {
+      console.log(`error occurred while running getRandomIdAndSendEmail in register-step-1-new.js line 103`)
+    })
+}
+
+
 module.exports = {
-  handleRegisterWithEmail: handleRegisterWithEmail
+  handleRegisterWithEmail
 }
