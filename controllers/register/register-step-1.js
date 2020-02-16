@@ -64,7 +64,7 @@ const checkIfEmailExistsInRedis = (name, email, passwordEnc, req, res) => {
             }
           })
       } else {
-        console.log(`${x} from register-step-1-new.js line 67'`)
+        console.log(`${x} from register-step-1.js line 67'`)
         // if key === 1, then run getRandomIdAndSendEmail function
         getRandomIdAndSendEmail(req, res)
       }
@@ -79,29 +79,26 @@ const checkIfEmailExistsInRedis = (name, email, passwordEnc, req, res) => {
 // the function below finds the randomId assigned to the email and sends email confirmation email
 // again and also increments requestCount by 1 each time. if email request exceeds 5, no new email
 // will be sent.
-const getRandomIdAndSendEmail = (req, res) => {
+const getRandomIdAndSendEmail = async (req, res) => {
   const { email } = req.body;
-  let randomId = ''
-  return redisHelper.getToken(email)
-    .then(someId => {
-      randomId = someId
-      return redisHelper.getToken(`${randomId} requestCount`)
-    })
-    .then(requestCount => {
-      if (requestCount < 5) {
-        redisHelper.incrementValue(`${randomId} requestCount`)
-        return true
-      } else {
-        return false
-      }
-    })
-    .then(val => {
-      val ? handleSendingEmailConfirmation(randomId, req, res)
-        : res.status(400).json('too many requests were made')
-    })
-    .catch(err => {
-      console.log(`error occurred while running getRandomIdAndSendEmail in register-step-1-new.js line 103`)
-    })
+  let val = ''
+  let count = ''
+
+  let randomId = await redisHelper.getToken(email)
+  let requestCount = await redisHelper.getToken(`${randomId} requestCount`)
+
+  if (requestCount < 5) {
+    await redisHelper.incrementValue(`${randomId} requestCount`)
+    val = true
+  } else {
+    val = false
+  }
+
+  if (val) {
+    handleSendingEmailConfirmation(randomId, req, res)
+  } else {
+    res.status(400).json('too many requests were made')
+  }
 }
 
 

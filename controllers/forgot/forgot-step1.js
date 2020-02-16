@@ -14,7 +14,7 @@ an email with a resetId and a success status of 200. If no, sends the users
 no emails but still with a success status of 200. This will keep anyone from 
 figuring out what emails exist in our database */
 
-const handleForgotPassword = async (db, req, res) => {
+const handleForgotPassword = (db, req, res) => {
 
   const { yourEmail } = req.body;
 
@@ -27,16 +27,16 @@ const handleForgotPassword = async (db, req, res) => {
     .then(user => {
       if (user[0].id) {
         const randomId = uuidv4();
-        redisHelper.setToken(yourEmail, randomId)
+        redisHelper.setToken(yourEmail, 'a')
           .then(check => {
-            if (check === true) {
+            if (check === 'OK') {
               handleSendingEmail(randomId, req, res)
             } else {
-              throw new Error
+              return Promise.reject()
             }
           })
           .catch(err => {
-            console.log('Something went wrong in step forgot step 1 line 39')
+            console.log(err + 'Something went wrong in step forgot step 1 line 39')
           })
         return res.status(200).json('Please check your email and enter the code provided in the box below')
       }
