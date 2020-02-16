@@ -1,14 +1,14 @@
 const handleProfileGet = (req, res, db) => {
   const { id } = req.params;
-  db.select('*').from('users').where({id})
+  db.select('*').from('users').where({ id })
     .then(user => {
-      if(user.length) {
-        res.json(user[0])
+      if (user.length) {
+        res.status(200).json(user[0])
       } else {
         res.status(400).json('Not found')
       }
     })
-  .catch(err => res.status(400).json('error getting user'))
+    .catch(err => res.status(400).json('error getting user'))
 }
 
 const handleProfileUpdate = (req, res, db) => {
@@ -18,7 +18,7 @@ const handleProfileUpdate = (req, res, db) => {
     .where({ id })
     .update({ name, age, pet })
     .then(resp => {
-      if(resp) {
+      if (resp) {
         res.json("success")
       } else {
         res.status(400).json('Unable to update')
@@ -34,7 +34,7 @@ const handleProfilePhoto = (req, res, db) => {
     .where({ id })
     .update({ handle })
     .then(resp => {
-      if(resp) {
+      if (resp) {
         res.json("success inserted handle in db")
       } else {
         res.status(400).json('Unable to insert handle in db')

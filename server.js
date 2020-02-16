@@ -8,8 +8,8 @@ const morgan = require('morgan');
 // comes with Express.
 const path = require('path');
 
-const registerStepOne = require('./controllers/register/register-step-1');
 const registerStepOneNew = require('./controllers/register/register-step-1-old');
+const registerStepOne = require('./controllers/register/register-step-1');
 const registerStepTwo = require('./controllers/register/register-step-2');
 const signin = require('./controllers/signin');
 const forgot = require('./controllers/forgot/forgot-step1');
