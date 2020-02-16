@@ -13,7 +13,7 @@ const createSession = (user) => {
     .then(() => {
       return { success: 'true', userId: id, token, user }
     })
-    .catch(console.log);
+    .catch(err => console.log(`error creating session in signin.js`));
 };
 
 const handleSignin = (db, bcrypt, req, res) => {
@@ -41,10 +41,10 @@ const getAuthTokenId = (req, res) => {
   const { authorization } = req.headers;
   return redisHelper.getToken(authorization)
     .then(reply => {
-      return res.status(200).json({ id: reply })
+      res.status(200).json({ id: reply })
     })
     .catch(e => {
-      return res.status(401).json('Unauthorized')
+      res.status(401).json('Unauthorized')
     })
 }
 

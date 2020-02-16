@@ -58,7 +58,7 @@ const getAuthTokenId = (req, res) => {
   const { authorization } = req.headers;
   return redisHelper.getToken(authorization, (err, reply) => {
     if (err || !reply) {
-      return res.status(401).send('Unauthorized');
+      return res.status(401).json('Unauthorized');
     }
     return res.json({ id: reply })
   });
