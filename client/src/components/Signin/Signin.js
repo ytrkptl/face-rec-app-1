@@ -26,42 +26,42 @@ class Signin extends React.Component {
   }
 
   componentDidUpdate() {
-    if (this.emailRef.current.validity.valid===true && this.state.showEmailError===true) {
-      this.setState({showEmailError: false})
-    } else if(this.emailRef.current.validity.valid===false && this.state.showEmailError===false) {
-      this.setState({showEmailError: true})
+    if (this.emailRef.current.validity.valid === true && this.state.showEmailError === true) {
+      this.setState({ showEmailError: false })
+    } else if (this.emailRef.current.validity.valid === false && this.state.showEmailError === false) {
+      this.setState({ showEmailError: true })
     }
-    if (this.passwordRef.current.validity.valid===true && this.state.showPasswordError===true) {
-      this.setState({showPasswordError: false})
-    } else if(this.passwordRef.current.validity.valid===false && this.state.showPasswordError===false) {
-      this.setState({showPasswordError: true})
+    if (this.passwordRef.current.validity.valid === true && this.state.showPasswordError === true) {
+      this.setState({ showPasswordError: false })
+    } else if (this.passwordRef.current.validity.valid === false && this.state.showPasswordError === false) {
+      this.setState({ showPasswordError: true })
     }
   }
 
   onEmailChange = (event) => {
-    this.setState({signInEmail: event.target.value})
+    this.setState({ signInEmail: event.target.value })
   }
 
   onEmailError = (show) => {
     if (show) {
-      this.setState({showEmailError: true, emailErrorMessage: `Email is a required field and must include a proper email address. Example: abc@gmail.com`})
+      this.setState({ showEmailError: true, emailErrorMessage: `Email is a required field and must include a proper email address. Example: abc@gmail.com` })
       this.emailRef.current.classList.add('highlightClassInSignIn')
       this.emailRef.current.focus()
       return
     }
-    this.setState({showEmailError: false})
+    this.setState({ showEmailError: false })
     this.emailRef.current.classList.remove('highlightClassInSignIn')
     return
   }
 
   onEnterKeyPressOnEmail = (event) => {
-    if(event.key === 'Enter' && this.state.signInEmail==='') {
+    if (event.key === 'Enter' && this.state.signInEmail === '') {
       this.onEmailError(true)
-    } else if(event.key === 'Enter' && this.emailRef.current.validity.typeMismatch) {
+    } else if (event.key === 'Enter' && this.emailRef.current.validity.typeMismatch) {
       this.onEmailError(true)
-    } else if(event.key === 'Enter' && !this.emailRef.current.validity.typeMismatch) {
+    } else if (event.key === 'Enter' && !this.emailRef.current.validity.typeMismatch) {
       this.onEmailError(false)
-      if(this.state.signInPassword==='') {
+      if (this.state.signInPassword === '') {
         this.passwordRef.current.focus()
       } else {
         this.onSubmitSignIn()
@@ -70,29 +70,29 @@ class Signin extends React.Component {
   }
 
   onPasswordChange = (event) => {
-    this.setState({signInPassword: event.target.value})
+    this.setState({ signInPassword: event.target.value })
   }
 
   onPasswordError = (showPasswordError) => {
     if (showPasswordError) {
-      this.setState({showPasswordError: true, passwordErrorMessage: 'Password is a required field and must be between 8 - 10 characters.'})
+      this.setState({ showPasswordError: true, passwordErrorMessage: 'Password is a required field and must be between 8 - 10 characters.' })
       this.passwordRef.current.classList.add('highlightClassInSignIn')
       this.passwordRef.current.focus()
       return
     }
-    this.setState({showPasswordError: false})
+    this.setState({ showPasswordError: false })
     this.passwordRef.current.classList.remove('highlightClassInSignIn')
     return
   }
 
   onEnterKeyPressOnPassword = (event) => {
-    if(event.key === 'Enter' && this.state.signInPassword.length<8) {
+    if (event.key === 'Enter' && this.state.signInPassword.length < 8) {
       this.onPasswordError(true)
-    } else if(event.key === 'Enter' && !this.passwordRef.current.validity.valid) {
+    } else if (event.key === 'Enter' && !this.passwordRef.current.validity.valid) {
       this.onPasswordError(true)
-    } else if(event.key === 'Enter' && this.state.signInPassword.length>=8) {
+    } else if (event.key === 'Enter' && this.state.signInPassword.length >= 8) {
       this.onPasswordError(false)
-      if(this.state.signInEmail==='') {
+      if (this.state.signInEmail === '') {
         this.emailRef.current.focus()
       } else {
         this.onSubmitSignIn()
@@ -105,21 +105,21 @@ class Signin extends React.Component {
   }
 
   onSubmitSignIn = () => {
-      if (this.passwordRef.current.value.length < 8) {
-        this.onPasswordError(true)
-      } else {
-        this.onPasswordError(false)
-      }
-      if (this.state.signInEmail==='' || this.emailRef.current.validity.typeMismatch) {
-        this.onEmailError(true)
-      } else {
-        this.onEmailError(false)
-      }
-    if (!this.state.showEmailError && !this.state.showPasswordError && this.state.signInEmail!=='' && this.state.signInPassword!=='') {
-      this.setState({showSpinner: true})
+    if (this.passwordRef.current.value.length < 8) {
+      this.onPasswordError(true)
+    } else {
+      this.onPasswordError(false)
+    }
+    if (this.state.signInEmail === '' || this.emailRef.current.validity.typeMismatch) {
+      this.onEmailError(true)
+    } else {
+      this.onEmailError(false)
+    }
+    if (!this.state.showEmailError && !this.state.showPasswordError && this.state.signInEmail !== '' && this.state.signInPassword !== '') {
+      this.setState({ showSpinner: true })
       fetch(`/signin`, {
         method: 'post',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: this.state.signInEmail,
           password: this.state.signInPassword
@@ -136,9 +136,9 @@ class Signin extends React.Component {
           }
         })
         .catch(err => {
-          if(err) {
+          if (err) {
             this.setState({
-              showError: true, 
+              showError: true,
               errorMessage: `Something went wrong. Please try again.`,
               showSpinner: false
             })
@@ -156,7 +156,7 @@ class Signin extends React.Component {
             <fieldset id="sign_up" className="signinFieldset">
               <legend className="signinLegend">Sign In</legend>
               {
-                this.state.showError && 
+                this.state.showError &&
                 <p className="signinErrorDisplay">{this.state.errorMessage}</p>
               }
               <div className="belowLegendDivInSignin" onSubmit={this.onSubmitForm}>
@@ -189,24 +189,21 @@ class Signin extends React.Component {
                   onKeyDown={this.onEnterKeyPressOnPassword}
                 />
                 {
-                  this.state.showPasswordError===true &&
+                  this.state.showPasswordError === true &&
                   <p className="signinErrorDisplay signinFieldsError">{this.state.passwordErrorMessage}</p>
                 }
               </div>
             </fieldset>
             <Spinner showSpinner={this.state.showSpinner} />
-            {/* <div> */}
-              <input
-                onClick={this.onSubmitSignIn}
-                className="signinButtonInSignin"
-                type="submit"
-                value="Sign in"
-              />
-            {/* </div> */}
-            
+            <input
+              onClick={this.onSubmitSignIn}
+              className="signinButtonInSignin"
+              type="submit"
+              value="Sign in"
+            />
             <div className="belowSigninButtonDiv">
-              <p  onClick={() => onRouteChange('forgot')} className="registerLinkInSignin">Forgot Password</p>
-              <p  onClick={() => onRouteChange('register')} className="registerLinkInSignin">Register</p>
+              <p onClick={() => onRouteChange('forgot')} className="registerLinkInSignin">Forgot Password</p>
+              <p onClick={() => onRouteChange('register')} className="registerLinkInSignin">Register</p>
             </div>
           </div>
         </main>

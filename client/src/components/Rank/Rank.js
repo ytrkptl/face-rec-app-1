@@ -14,21 +14,21 @@ class Rank extends React.Component {
 	}
 
 	componentDidUpdate(prevProps, prevState) {
-		if(prevProps.entries === this.props.entries && prevProps.name===this.props.name){
+		if (prevProps.entries === this.props.entries && prevProps.name === this.props.name) {
 			return null
 		}
-		this.generateEmoji(this.props.entries)	
+		this.generateEmoji(this.props.entries)
 	}
 
 	generateEmoji = (entries) => {
 		fetch(`${process.env.REACT_APP_LAMBDA_RANK_QUERY}${entries}`)
 			.then(response => response.json())
-			.then(data => this.setState({emoji: data.input}))
-			.catch(console.log)
+			.then(data => this.setState({ emoji: data.input }))
+			.catch(err => console.log('error occured fetching rank badge'))
 	}
 
 	render() {
-		return(
+		return (
 			<div className="rankParent">
 				<div className='rankText'>
 					{`${this.props.name}, your current entry count is...`}

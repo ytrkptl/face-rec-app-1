@@ -7,7 +7,6 @@ import Signin from '../components/Signin/Signin';
 import Register from '../components/Register/Register';
 import Forgot from '../components/Forgot/Forgot';
 import UploadButtonWithPicker from '../components/UploadButtonWithPicker/UploadButtonWithPicker';
-// import UploadToCloudinary from '../components/UploadToCloudinary/UploadToCloudinary';
 import Rank from '../components/Rank/Rank';
 import Modal from '../components/Modal/Modal';
 import Profile from '../components/Profile/Profile';
@@ -79,9 +78,10 @@ class App extends Component {
                   this.onRouteChange('home');
                 }
               })
+              .catch(err => console.log(err + 'error fetching user profile in App.js component did mount'))
           }
         })
-        .catch(console.log)
+        .catch(err => console.log(err + `error in componentDidMount in App.js`))
     }
   }
 
@@ -170,7 +170,7 @@ class App extends Component {
             .then(count => {
               this.setState(Object.assign(this.state.user, { entries: count }))
             })
-            .catch(console.log)
+            .catch(err => console.log(`error onButtonSubmit method in App.js line 173`))
         }
         this.displayFaceBox(this.calculateFaceLocations(response))
       })
@@ -300,7 +300,6 @@ class App extends Component {
                 changeImageUrl={this.changeImageUrl}
                 client={client}
               />
-              {/* <UploadToCloudinary changeImageUrl={this.changeImageUrl} /> */}
               <FaceRecognition boxes={boxes} imageUrl={imageUrl} />
             </div>
           }
