@@ -27,7 +27,7 @@ const handleForgotPassword = (db, req, res) => {
     .then(user => {
       if (user[0].id) {
         const randomId = uuidv4();
-        redisHelper.setToken(yourEmail, 'a')
+        redisHelper.setToken(yourEmail, randomId)
           .then(check => {
             if (check === 'OK') {
               handleSendingEmail(randomId, req, res)
