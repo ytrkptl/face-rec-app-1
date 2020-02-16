@@ -13,7 +13,7 @@ const createSession = (user) => {
     .then(() => {
       return { success: 'true', userId: id, token, user }
     })
-    .catch(err => console.log(`error creating session line 16 in register-step-2`));
+    .catch(err => console.log(err));
 };
 
 const handleRegister = (db, bcrypt, req, res) => {
@@ -23,6 +23,7 @@ const handleRegister = (db, bcrypt, req, res) => {
 
   return redisHelper.getMultipleValues(uniqueKey + 'randomId', uniqueKey + 'name', uniqueKey + 'email', uniqueKey + 'password')
     .then(values => {
+      console.log(values)
       let randomId = values[0].slice(0, 37)
       let name = values[1]
       let email = values[2]
@@ -58,20 +59,18 @@ const getAuthTokenId = (req, res) => {
   const { authorization } = req.headers;
   return redisHelper.getToken(authorization, (err, reply) => {
     if (err || !reply) {
-      return res.status(401).json('Unauthorized');
+      return res.status(401).send('Unauthorized');
     }
     return res.json({ id: reply })
   });
 }
 
 const registerAuthentication = (db, bcrypt) => (req, res) => {
-  const { authorization } = req.headers;
-  return authorization ? getAuthTokenId(req, res)
-    : handleRegister(db, bcrypt, req, res)
-      .then(data =>
-        data.id && data.email ? createSession(data) : Promise.reject(data))
-      .then(session => res.json(session))
-      .catch(err => res.status(400).json(err));
+  return handleRegister(db, bcrypt, req, res)
+    .then(data =>
+      data.id && data.email ? createSession(data) : Promise.reject(data))
+    .then(session => res.json(session))
+    .catch(err => res.status(400).json(err));
 }
 
 module.exports = {
