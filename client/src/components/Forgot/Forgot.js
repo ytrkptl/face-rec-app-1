@@ -15,6 +15,7 @@ class Forgot extends React.Component {
       resetIdErrorMessage: '',
       newPasswordErrorMessage: ``,
       confirmPasswordErrorMessage: ``,
+      step2StatusMessage: ``,
       step3StatusMessage: ``,
       showError: false,
       showForgotEmailError: false,
@@ -24,6 +25,7 @@ class Forgot extends React.Component {
       showSpinner: null,
       proceed: false,
       passwordsMatch: false,
+      showStep2Status: false,
       showStep3Status: false,
       stepNumber: 1
     }
@@ -206,7 +208,7 @@ class Forgot extends React.Component {
       })
         .then(response => response.json())
         .then(data => {
-          this.setState({ showSpinner: false, stepNumber: 2, })
+          this.setState({ showSpinner: false, stepNumber: 2, showStep2Status: true, step2StatusMessage: data })
         })
         .catch(err => {
           if (err) {
@@ -220,7 +222,7 @@ class Forgot extends React.Component {
     if (this.state.resetId === '' || !this.resetIdRef.current.validity.valid) {
       this.onResetIdError(true)
     } else {
-      this.setState({ showSpinner: true });
+      this.setState({ showStep2Status: false, showSpinner: true });
       fetch(`/reset`, {
         method: 'post',
         headers: { 'Content-Type': 'application/json' },
@@ -308,6 +310,7 @@ class Forgot extends React.Component {
             <fieldset id="forgot" className="forgotFieldset">
               <legend className="forgotLegend">Reset Password</legend>
               <h4 className="steps">{`Step ${this.state.stepNumber} of 3`}</h4>
+              {this.state.showStep2Status && <p className="forgotErrorDisplay">{this.state.step2StatusMessage}</p>}
               {
                 this.state.showSpinner === null && this.state.proceed === false ?
                   <div className="belowLegendDivInForgot">

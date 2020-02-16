@@ -61,7 +61,7 @@ app.get('/', (req, res) => {
 });
 app.post('/signin', signin.signinAuthentication(db, bcrypt))
 app.post('/register-step-1', (req, res) => registerStepOne.handleRegisterWithEmail(db, bcrypt, req, res))
-app.post('/register-step-1-new', (req, res) => registerStepOneNew.handleRegisterWithEmail(db, bcrypt, req, res))
+// app.post('/register-step-1-new', (req, res) => registerStepOneNew.handleRegisterWithEmail(db, bcrypt, req, res))
 app.post('/register-step-2', registerStepTwo.registerAuthentication(db, bcrypt))
 app.post('/forgot', (req, res) => { forgot.handleForgotPassword(db, req, res) })
 app.post('/reset', (req, res) => { reset.handleResetId(req, res) })
