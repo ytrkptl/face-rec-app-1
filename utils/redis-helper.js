@@ -40,7 +40,8 @@ const getToken = key => {
   }).catch(err => console.log(err + ' error occurred while running getToken in redisHelper'))
 }
 
-// use the following function to get multiple keys' values instead
+// use the following function to get multiple keys' values instead. currently works in conjunction with register-step-2
+// to accept only 4 keys
 const getMultipleValues = (key1, key2, key3, key4) => {
   return new Promise((resolve, reject) => {
     redisClient.mget(key1, key2, key3, key4, function (error, result) {

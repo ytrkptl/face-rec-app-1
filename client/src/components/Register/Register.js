@@ -236,6 +236,7 @@ class Register extends React.Component {
         })
         .catch(err => {
           if (err) {
+            console.log(err)
             this.setState({ showError: true, showSpinner: false, registerStepNum: 1 })
           }
         })
