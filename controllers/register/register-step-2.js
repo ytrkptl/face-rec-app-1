@@ -16,14 +16,13 @@ const createSession = (user) => {
     .catch(err => console.log(err));
 };
 
-const handleRegister = (db, bcrypt, req, res) => {
+const handleRegister = (db, req, res) => {
 
   const { confirmationId } = req.body;
   let uniqueKey = confirmationId + ' ';
 
   return redisHelper.getMultipleValues(uniqueKey + 'randomId', uniqueKey + 'name', uniqueKey + 'email', uniqueKey + 'password')
     .then(values => {
-      console.log(values)
       let randomId = values[0].slice(0, 37)
       let name = values[1]
       let email = values[2]
@@ -55,18 +54,8 @@ const handleRegister = (db, bcrypt, req, res) => {
     .catch(err => err)
 }
 
-const getAuthTokenId = (req, res) => {
-  const { authorization } = req.headers;
-  return redisHelper.getToken(authorization, (err, reply) => {
-    if (err || !reply) {
-      return res.status(401).send('Unauthorized');
-    }
-    return res.json({ id: reply })
-  });
-}
-
-const registerAuthentication = (db, bcrypt) => (req, res) => {
-  return handleRegister(db, bcrypt, req, res)
+const registerAuthentication = (db) => (req, res) => {
+  return handleRegister(db, req, res)
     .then(data =>
       data.id && data.email ? createSession(data) : Promise.reject(data))
     .then(session => res.json(session))
