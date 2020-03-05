@@ -2,7 +2,6 @@ const signToken = require('../utils/jwt-helpers').signToken;
 const redisHelper = require('../utils/redis-helper');
 
 const createSession = (user) => {
-  console.log('hihiii')
   const { email, id } = user;
   const token = signToken(email, '2 days');
   return redisHelper.setToken(token, id)
