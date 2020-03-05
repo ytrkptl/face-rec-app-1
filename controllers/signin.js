@@ -1,14 +1,10 @@
-const jwt = require('jsonwebtoken');
+const signToken = require('../utils/jwt-helpers').signToken;
 const redisHelper = require('../utils/redis-helper');
 
-const signToken = (username) => {
-  const jwtPayload = { username };
-  return jwt.sign(jwtPayload, 'JWT_SECRET_KEY', { expiresIn: '2 days' });
-};
-
 const createSession = (user) => {
+  console.log('hihiii')
   const { email, id } = user;
-  const token = signToken(email);
+  const token = signToken(email, '2 days');
   return redisHelper.setToken(token, id)
     .then(() => {
       return { success: 'true', userId: id, token, user }
@@ -23,18 +19,27 @@ const handleSignin = (db, bcrypt, req, res) => {
   }
   return db.select('email', 'hash').from('login')
     .where('email', '=', email)
-    .then(data => {
-      const isValid = bcrypt.compareSync(password, data[0].hash);
-      if (isValid) {
+    .then(data => checkPassword(bcrypt, password, data[0].hash))
+    .then(result => {
+      if (result) {
         return db.select('*').from('users')
           .where('email', '=', email)
           .then(user => user[0])
-          .catch(err => res.status(400).json('unable to get user'))
-      } else {
-        return Promise.reject('wrong credentials');
+          .catch(err => err)
       }
     })
     .catch(err => err)
+}
+
+const checkPassword = (bcrypt, password, hash) => {
+  return new Promise((resolve, reject) => {
+    let passwordMatches = bcrypt.compareSync(password, hash)
+    if (passwordMatches) {
+      resolve(true)
+    } else {
+      reject('password did not match')
+    }
+  })
 }
 
 const getAuthTokenId = (req, res) => {
@@ -59,6 +64,5 @@ const signinAuthentication = (db, bcrypt) => (req, res) => {
 }
 
 module.exports = {
-  signinAuthentication,
-  jwt
+  signinAuthentication
 }
