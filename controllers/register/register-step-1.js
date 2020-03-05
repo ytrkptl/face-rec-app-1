@@ -37,13 +37,14 @@ const handleRegisterWithEmail = (db, bcrypt, req, res) => {
 }
 
 
-/*this function not only checks if email exists in redis but also sends an sets 
+/*this function not only checks if email exists in redis but also sends and sets 
 keys and values in redis if it does not exist, otherwise simply sends another email
 to the user if key does exist in redis already up to 5 times.
 the limit is set to 5 to keep anyone from abusing the system by requesting multiple
 emails*/
 const checkIfEmailExistsInRedis = (name, email, passwordEnc, req, res) => {
-  const randomId = randomIdFunc();
+  // const randomId = randomIdFunc();
+  const randomId = 'aaaaaaaa';
   let someKeys = ['randomId', 'name', email, 'password', 'email', 'requestCount']
   let someVals = [randomId, name, randomId, passwordEnc, email, 1]
 
