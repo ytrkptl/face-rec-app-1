@@ -1,9 +1,26 @@
-const jwt = require('../signin').jwt;
+const jwt = require('../../utils/jwt-helpers').jwt;
 const redisHelper = require('../../utils/redis-helper');
 
+//numeric values are interpreted as seconds in jsonwebtoken
+// 900 seconds equals 15 minutes
 const signToken = (username) => {
   const jwtPayload = { username };
-  return jwt.sign(jwtPayload, 'JWT_SECRET_KEY', { expiresIn: '2 days' });
+  return jwt.sign(jwtPayload, `${process.env.JWT_SECRET_KEY}`, { expiresIn: 900 });
+};
+
+// the funciton below will verify if the jwt token is valid.
+// if it is invalid, it will return "jwt expired" as part of err.message
+const verifyToken = (req, res) => {
+  const { token } = req.body;
+  let tempToken = ''
+  // verify a token symmetric
+  jwt.verify(token, `${process.env.JWT_SECRET_KEY}`, function (err, decoded) {
+    if (err) {
+      res.status(400).json(err.message)
+    }
+    tempToken = decoded
+    res.json(tempToken)
+  });
 };
 
 const createSession = (user) => {
@@ -48,10 +65,10 @@ const handleRegister = (db, req, res) => {
             .then(trx.commit)
             .catch(trx.rollback)
         })
-          .catch(err => err)
+          .catch(err => console.log(err))
       }
     })
-    .catch(err => err)
+    .catch(err => console.log(err))
 }
 
 const registerAuthentication = (db) => (req, res) => {
