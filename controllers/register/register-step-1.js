@@ -1,6 +1,6 @@
 const redisHelper = require('../../utils/redis-helper');
 const handleSendingEmailConfirmation = require('../send-email-confirmation').handleSendingEmailConfirmation;
-const randomIdFunc = require('../../utils/other-helper').getUuidv4;
+const randomIdFunc = require('../../utils/other-helper').getSixDigitCode;
 
 let messageToSend = `If the email address you provided is valid, you should've received a code in an email from us. Please check your email and enter that code below.`
 
