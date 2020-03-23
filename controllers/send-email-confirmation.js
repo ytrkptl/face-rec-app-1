@@ -60,8 +60,8 @@ const handleSendingEmailConfirmation = (someToken, req, res) => {
       return res.status(400).json(`Something went wrong. Please use the following email
         address to contact us about this issue: ${process.env.USER_EMAIL_ID_TO_SHOW}`);
     } else {
-      return res.status(200).json(`Your email was sent successfully. We'll 
-      get back in touch with you as soon as possible. Thanks for your interest.`);
+      return res.status(200).json(`Your email was sent successfully. Please check your email and 
+      enter the code provided in the email below.`);
     }
   });
 }
