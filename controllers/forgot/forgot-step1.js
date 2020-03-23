@@ -21,7 +21,7 @@ const handleForgotPassword = (db, req, res) => {
     .then(user => {
       if (user[0].id) {
         const randomId = randomIdFunc();
-        redisHelper.setToken(yourEmail, randomId)
+        redisHelper.setTokenWithEx(yourEmail, 900, randomId)
           .then(check => {
             if (check === 'OK') {
               handleSendingEmail(randomId, req, res)
@@ -32,11 +32,11 @@ const handleForgotPassword = (db, req, res) => {
           .catch(err => {
             console.log(err + 'Something went wrong in step forgot step 1 line 39')
           })
-        return res.status(200).json('Please check your email and enter the code provided in the box below')
+        return res.status(200).json('Please check your email and enter the code provided in the box below within 15 minutes.')
       }
     })
     .catch(err => {
-      return res.status(200).json(`Please check your email and enter the code provided in the box below`)
+      return res.status(200).json(`Please check your email and enter the code provided in the box below within 15 minutes.`)
     })
 }
 
