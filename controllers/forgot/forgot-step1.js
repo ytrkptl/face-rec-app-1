@@ -30,7 +30,7 @@ const handleForgotPassword = (db, req, res) => {
             }
           })
           .catch(err => {
-            console.log(err + 'Something went wrong in step forgot step 1 line 39')
+            console.log('Something went wrong in step forgot step 1 line 33')
           })
         return res.status(200).json('Please check your email and enter the code provided in the box below within 15 minutes.')
       }

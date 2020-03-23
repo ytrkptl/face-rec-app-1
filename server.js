@@ -8,7 +8,6 @@ const morgan = require('morgan');
 // comes with Express.
 const path = require('path');
 
-const registerStepOneNew = require('./controllers/register/register-step-1-old');
 const registerStepOne = require('./controllers/register/register-step-1');
 const registerStepTwo = require('./controllers/register/register-step-2');
 const signin = require('./controllers/signin');
@@ -36,11 +35,10 @@ const db = knex({
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(morgan('tiny'));
+app.use(morgan('combined'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors())
-
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'client/build')));

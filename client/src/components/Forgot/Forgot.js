@@ -288,7 +288,7 @@ class Forgot extends React.Component {
         .then(response => response.json())
         .then(data => {
           this.setState({ showSpinner: false })
-          if (data === 'Password reset complete') {
+          if (data === 'Password reset complete.') {
             this.setState({ showStep3Status: true, step3StatusMessage: `Password was successfully updated. Now taking you back to the sign in page.` })
             setTimeout(() => this.props.onRouteChange('signin'), 3000)
           } else {
