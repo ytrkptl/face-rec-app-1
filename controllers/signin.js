@@ -3,7 +3,7 @@ const redisHelper = require('../utils/redis-helper');
 
 const createSession = (user) => {
   const { email, id } = user;
-  const token = signToken(email, '2 days');
+  const token = signToken(email, 900);
   return redisHelper.setToken(token, id)
     .then(() => {
       return { success: 'true', userId: id, token, user }

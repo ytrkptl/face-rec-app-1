@@ -40,7 +40,8 @@ const handleRegister = (db, req, res) => {
 
   return redisHelper.getMultipleValues(uniqueKey + 'randomId', uniqueKey + 'name', uniqueKey + 'email', uniqueKey + 'password')
     .then(values => {
-      let randomId = values[0].slice(0, 7)
+      console.log(values, confirmationId)
+      let randomId = values[0].slice(0, 6)
       let name = values[1]
       let email = values[2]
       let hash = values[3]

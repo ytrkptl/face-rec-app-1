@@ -1,6 +1,10 @@
+const redisHelper = require('../../utils/redis-helper');
+
 /*This corresponds to Step 3 of Forgot Password
 It only happens if Step 1 and 2 are fulfilled,
-followed by filling both "new password" and "confirm new password"*/
+followed by filling both "new password" and "confirm new password"
+Once the password is updated in the postgres database, 
+*/
 
 const handleUpdateNewPassword = async (req, res, db, bcrypt) => {
 
@@ -22,7 +26,14 @@ const handleUpdateNewPassword = async (req, res, db, bcrypt) => {
       .then(trx.commit)
       .catch(trx.rollback)
   })
-    .then(() => { return res.status(200).json('Password reset complete') })
+    .then(() => redisHelper.deleteToken(yourEmail))
+    .then(msg => {
+      if (msg === 0) {
+        return res.status(400).json('Password reset request time allowed has expired. Please try again.')
+      } else if (msg === 1) {
+        return res.status(200).json('Password reset complete.')
+      }
+    })
     .catch(err => console.log('from forgot step 3 in handleUpdatePassword line 26'))
 }
 

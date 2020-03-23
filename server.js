@@ -36,7 +36,7 @@ const db = knex({
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(morgan('combined'));
+app.use(morgan('tiny'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors())
