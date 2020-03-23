@@ -129,10 +129,10 @@ const setMultipleValuesWithEx = (someKeys, someVals) => {
       for (let i = 0; i < someKeys.length; i++) {
         if (i === 2) {
           a.set(someKeys[i], someVals[i])
-          a.expire(someKeys[i], 3600)
+          a.expire(someKeys[i], 900)
         } else {
           a.set(uniqueKey + someKeys[i], someVals[i])
-          a.expire(uniqueKey + someKeys[i], 3600)
+          a.expire(uniqueKey + someKeys[i], 900)
         }
       }
 
