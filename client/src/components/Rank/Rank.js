@@ -21,11 +21,16 @@ class Rank extends React.Component {
 	}
 
 	generateEmoji = (entries) => {
-		fetch(`${process.env.REACT_APP_LAMBDA_RANK_QUERY}${entries}`)
-			.then(response => response.json())
-			.then(data => this.setState({ emoji: data.input }))
-			.catch(err => console.log('error occured fetching rank badge'))
+		if (Number(entries) === 0) {
+			this.setState({ emoji: 'None' })
+		} else {
+			fetch(`${process.env.REACT_APP_LAMBDA_RANK_QUERY}${entries}`)
+				.then(response => response.json())
+				.then(data => this.setState({ emoji: data.input }))
+				.catch(err => console.log('error occured fetching rank badge'))
+		}
 	}
+
 
 	render() {
 		return (
