@@ -8,7 +8,7 @@ const handleSendingEmailConfirmation = (someToken, req, res) => {
 
   const msg = {
     to: `${email}`,
-    from: `${process.env.USER_EMAIL_ID_TO_SHOW}`,
+    from: `${process.env.AUTHOR_EMAIL}`,
     subject: `Yatrik's Face Recognition App - Confirmation`,
     html: `
     <body style="padding:0;margin:0;">
@@ -50,7 +50,7 @@ const handleSendingEmailConfirmation = (someToken, req, res) => {
       console.log(err);
       return res.status(400)
         .json(`Something went wrong. Please use the following email
-              address to contact us about this issue: ${process.env.USER_EMAIL_ID_TO_SHOW}`);
+              address to contact us about this issue: ${process.env.AUTHOR_EMAIL}`);
     });
 };
 
