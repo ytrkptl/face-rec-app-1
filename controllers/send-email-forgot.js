@@ -7,7 +7,7 @@ const handleSendingEmail = (someToken, req, res) => {
   const { yourEmail, name, message } = req.body;
   const msg = {
     to: `${email}`,
-    from: `${process.env.USER_EMAIL_ID_TO_SHOW}`,
+    from: `${process.env.AUTHOR_EMAIL}`,
     subject: `Yatrik's Face Recognition App - Confirmation`,
     html: `
       <table style="overflow-x:auto;width:100%;max-width:600px;border:1px solid black;margin:auto">
@@ -44,7 +44,7 @@ const handleSendingEmail = (someToken, req, res) => {
     .then((sent) => {
       return res.status(400)
         .send(`Something went wrong. Please use the following email
-        address to send Yatrik an email: ${process.env.USER_EMAIL_ID_TO_SHOW}`);
+        address to send Yatrik an email: ${process.env.AUTHOR_EMAIL}`);
     })
     .catch((err) => {
       return res.status(200).send(`Your email was sent successfully. Yatrik will
