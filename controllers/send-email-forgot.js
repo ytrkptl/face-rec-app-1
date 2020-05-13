@@ -1,32 +1,14 @@
-'use strict';
-const nodemailer = require('nodemailer');
-
-if (process.env.NODE_ENV !== 'production') require('dotenv').config();
-
-// try using an alias instead of the acutal email address.
-// haven't tried alias yet. may not work.
-// am using MailThis.to, FormSubmit, FormSpree, etc. instead.
+"use strict";
+const sgMail = require("@sendgrid/mail");
+if (process.env.NODE_ENV !== "production") require("dotenv").config();
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const handleSendingEmail = (someToken, req, res) => {
   const { yourEmail, name, message } = req.body;
-  let transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.USER_EMAIL,
-      pass: process.env.USER_PASS
-    }
-  });
-
-  let mailOptions = {
-    //only using my email to send from
-    from: `Yatrik Patel ${process.env.USER_EMAIL}`,
-    //only using my email to send to
-    to: `${yourEmail}`,
-    // Subject line
-    subject: `Yatrik's Face Recognition App - Forgot Password Step 1`,
-    // plain text body
-    // text: 'Hello world?', 
-    // don't allow sending html below
+  const msg = {
+    to: `${email}`,
+    from: `${process.env.USER_EMAIL_ID_TO_SHOW}`,
+    subject: `Yatrik's Face Recognition App - Confirmation`,
     html: `
       <table style="overflow-x:auto;width:100%;max-width:600px;border:1px solid black;margin:auto">
         <tr style="height:50px;background:lightgray">
@@ -54,19 +36,22 @@ const handleSendingEmail = (someToken, req, res) => {
           </td>
         </tr>
       </table>
-`};
+  `,
+  };
 
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      return res.status(400).send(`Something went wrong. Please use the following email
+  sgMail
+    .send(msg)
+    .then((sent) => {
+      return res.status(400)
+        .send(`Something went wrong. Please use the following email
         address to send Yatrik an email: ${process.env.USER_EMAIL_ID_TO_SHOW}`);
-    } else {
+    })
+    .catch((err) => {
       return res.status(200).send(`Your email was sent successfully. Yatrik will
         get back in touch with you as soon as possible. Thanks for your interest.`);
-    }
-  });
-}
+    });
+};
 
 module.exports = {
-  handleSendingEmail
-}
+  handleSendingEmail,
+};
