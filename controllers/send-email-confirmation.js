@@ -1,32 +1,15 @@
-'use strict';
-const nodemailer = require('nodemailer');
-
-if (process.env.NODE_ENV !== 'production') require('dotenv').config();
-
-// try using an alias instead of the acutal email address.
-// haven't tried alias yet. may not work.
-// am using MailThis.to, FormSubmit, FormSpree, etc. instead.
+"use strict";
+const sgMail = require("@sendgrid/mail");
+if (process.env.NODE_ENV !== "production") require("dotenv").config();
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const handleSendingEmailConfirmation = (someToken, req, res) => {
-
   const { email } = req.body;
-  let transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.USER_EMAIL,
-      pass: process.env.USER_PASS
-    }
-  });
-  let mailOptions = {
-    //only using my email to send from
-    from: process.env.USER_EMAIL,
-    //only using my email to send to
+
+  const msg = {
     to: `${email}`,
-    // Subject line
+    from: `${process.env.USER_EMAIL_ID_TO_SHOW}`,
     subject: `Yatrik's Face Recognition App - Confirmation`,
-    // plain text bodynpm 
-    // text: 'Hello world?', 
-    // don't allow sending html below
     html: `
     <body style="padding:0;margin:0;">
       <table style="overflow-x:auto;width:100%;max-width:600px;border:1px solid black;margin:auto;">
@@ -53,19 +36,24 @@ const handleSendingEmailConfirmation = (someToken, req, res) => {
         </tr>
       </table>
     </body>
-`};
+  `,
+  };
 
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      return res.status(400).json(`Something went wrong. Please use the following email
-        address to contact us about this issue: ${process.env.USER_EMAIL_ID_TO_SHOW}`);
-    } else {
-      return res.status(200).json(`Your email was sent successfully. Please check your email and 
-      enter the code provided in the email below.`);
-    }
-  });
-}
+  sgMail
+    .send(msg)
+    .then((sent) => {
+      return res.status(200)
+        .json(`Your email was sent successfully. Please check your email and 
+              enter the code provided in the email below.`);
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(400)
+        .json(`Something went wrong. Please use the following email
+              address to contact us about this issue: ${process.env.USER_EMAIL_ID_TO_SHOW}`);
+    });
+};
 
 module.exports = {
-  handleSendingEmailConfirmation
-}
+  handleSendingEmailConfirmation,
+};
