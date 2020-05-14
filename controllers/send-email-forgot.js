@@ -6,9 +6,9 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const handleSendingEmail = (someToken, req, res) => {
   const { yourEmail, name, message } = req.body;
   const msg = {
-    to: `${email}`,
+    to: `${yourEmail}`,
     from: `${process.env.AUTHOR_EMAIL}`,
-    subject: `Yatrik's Face Recognition App - Confirmation`,
+    subject: `Yatrik's Face Recognition App - Forgot Password`,
     html: `
       <table style="overflow-x:auto;width:100%;max-width:600px;border:1px solid black;margin:auto">
         <tr style="height:50px;background:lightgray">
