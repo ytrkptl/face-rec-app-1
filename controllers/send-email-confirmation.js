@@ -43,14 +43,14 @@ const handleSendingEmailConfirmation = (someToken, req, res) => {
     .send(msg)
     .then((sent) => {
       return res.status(200)
-        .json(`Your email was sent successfully. Please check your email and 
-              enter the code provided in the email below.`);
+        .json(`If the email you provided is valid, you'll receive a 6-digit code 
+        from us within the next 5 minutes. Please enter that 6-digit code below.`);
     })
     .catch((err) => {
       console.log(err);
       return res.status(400)
-        .json(`Something went wrong. Please use the following email
-              address to contact us about this issue: ${process.env.AUTHOR_EMAIL}`);
+        .json(`Something went wrong while sending a message to the email you provided.
+               Please use the following email address to contact us about this issue: ${process.env.AUTHOR_EMAIL}`);
     });
 };
 
