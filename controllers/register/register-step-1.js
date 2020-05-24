@@ -3,7 +3,8 @@ const handleSendingEmailConfirmation = require("../send-email-confirmation")
   .handleSendingEmailConfirmation;
 const randomIdFunc = require("../../utils/other-helper").getSixDigitCode;
 
-let messageToSend = `If the email address you provided is valid, you should've received a code in an email from us. Please check your email and enter that code below.`;
+let messageToSend = `If the email you provided is valid, you'll receive a 6-digit 
+code from us within the next 5 minutes. Please enter that 6-digit code below.`;
 
 /* This method checks to see if name, email, and password are provided first, then it
 checks to see if that email exists in database. If yes, sends the user
@@ -14,7 +15,7 @@ const handleRegisterWithEmail = (db, bcrypt, req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
-    return res.status(400).json("Please fill out a valid form");
+    return res.status(400).json("Please fill out a valid form.");
   }
 
   db.select("id", "email")
@@ -25,13 +26,11 @@ const handleRegisterWithEmail = (db, bcrypt, req, res) => {
         let passwordEnc = bcrypt.hashSync(password, 10);
         checkIfEmailExistsInRedis(name, email, passwordEnc, req, res);
       } else {
-        throw new Error(messageToSend);
+        throw new Error("This email is already in use. Please try another.");
       }
     })
     .catch((err) => {
-      if (err) {
-        return res.status(200).json(messageToSend);
-      }
+      return res.status(400).json(err.message);
     });
 };
 
@@ -71,7 +70,9 @@ const checkIfEmailExistsInRedis = (name, email, passwordEnc, req, res) => {
             }
           });
       } else {
-        console.log(`${x} from register-step-1.js line 67'`);
+        console.log(
+          `${email} already exists in Redis. from register-step-1.js line 77'`
+        );
         // if key === 1, then run getRandomIdAndSendEmail function
         getRandomIdAndSendEmail(req, res);
       }
@@ -105,7 +106,9 @@ const getRandomIdAndSendEmail = async (req, res) => {
   if (val) {
     handleSendingEmailConfirmation(randomId, req, res);
   } else {
-    res.status(400).json("too many requests were made");
+    res
+      .status(400)
+      .json("Too many requests were made. Please try again later.");
   }
 };
 

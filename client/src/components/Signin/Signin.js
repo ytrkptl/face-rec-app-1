@@ -1,151 +1,185 @@
-import React, { createRef } from 'react';
-import Spinner from '../Spinner/Spinner';
-import './Signin.css';
+import React, { createRef } from "react";
+import Spinner from "../Spinner/Spinner";
+import "./Signin.css";
 
 class Signin extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      signInEmail: '',
-      signInPassword: '',
+      signInEmail: "",
+      signInPassword: "",
       errorMessage: `Something went wrong. 
               Please try again.`,
-      emailErrorMessage: '',
-      passwordErrorMessage: '',
+      emailErrorMessage: "",
+      passwordErrorMessage: "",
       showEmailError: false,
       showPasswordError: false,
       showError: false,
       showSpinner: false,
-    }
-    this.emailRef = createRef()
-    this.passwordRef = createRef()
+    };
+    this.emailRef = createRef();
+    this.passwordRef = createRef();
   }
 
   componentDidMount() {
-    this.emailRef.current.focus()
+    this.emailRef.current.focus();
   }
 
   componentDidUpdate() {
-    if (this.emailRef.current.validity.valid === true && this.state.showEmailError === true) {
-      this.setState({ showEmailError: false })
-    } else if (this.emailRef.current.validity.valid === false && this.state.showEmailError === false) {
-      this.setState({ showEmailError: true })
+    if (
+      this.emailRef.current.validity.valid === true &&
+      this.state.showEmailError === true
+    ) {
+      this.setState({ showEmailError: false });
+    } else if (
+      this.emailRef.current.validity.valid === false &&
+      this.state.showEmailError === false
+    ) {
+      this.setState({ showEmailError: true });
     }
-    if (this.passwordRef.current.validity.valid === true && this.state.showPasswordError === true) {
-      this.setState({ showPasswordError: false })
-    } else if (this.passwordRef.current.validity.valid === false && this.state.showPasswordError === false) {
-      this.setState({ showPasswordError: true })
+    if (
+      this.passwordRef.current.validity.valid === true &&
+      this.state.showPasswordError === true
+    ) {
+      this.setState({ showPasswordError: false });
+    } else if (
+      this.passwordRef.current.validity.valid === false &&
+      this.state.showPasswordError === false
+    ) {
+      this.setState({ showPasswordError: true });
     }
   }
 
   onEmailChange = (event) => {
-    this.setState({ signInEmail: event.target.value })
-  }
+    this.setState({ signInEmail: event.target.value });
+  };
 
   onEmailError = (show) => {
     if (show) {
-      this.setState({ showEmailError: true, emailErrorMessage: `Email is a required field and must include a proper email address. Example: abc@gmail.com` })
-      this.emailRef.current.classList.add('highlightClassInSignIn')
-      this.emailRef.current.focus()
-      return
+      this.setState({
+        showEmailError: true,
+        emailErrorMessage: `Email is a required field and must include a proper email address. Example: abc@gmail.com`,
+      });
+      this.emailRef.current.classList.add("highlightClassInSignIn");
+      this.emailRef.current.focus();
+      return;
     }
-    this.setState({ showEmailError: false })
-    this.emailRef.current.classList.remove('highlightClassInSignIn')
-    return
-  }
+    this.setState({ showEmailError: false });
+    this.emailRef.current.classList.remove("highlightClassInSignIn");
+    return;
+  };
 
   onEnterKeyPressOnEmail = (event) => {
-    if (event.key === 'Enter' && this.state.signInEmail === '') {
-      this.onEmailError(true)
-    } else if (event.key === 'Enter' && this.emailRef.current.validity.typeMismatch) {
-      this.onEmailError(true)
-    } else if (event.key === 'Enter' && !this.emailRef.current.validity.typeMismatch) {
-      this.onEmailError(false)
-      if (this.state.signInPassword === '') {
-        this.passwordRef.current.focus()
+    if (event.key === "Enter" && this.state.signInEmail === "") {
+      this.onEmailError(true);
+    } else if (
+      event.key === "Enter" &&
+      this.emailRef.current.validity.typeMismatch
+    ) {
+      this.onEmailError(true);
+    } else if (
+      event.key === "Enter" &&
+      !this.emailRef.current.validity.typeMismatch
+    ) {
+      this.onEmailError(false);
+      if (this.state.signInPassword === "") {
+        this.passwordRef.current.focus();
       } else {
-        this.onSubmitSignIn()
+        this.onSubmitSignIn();
       }
     }
-  }
+  };
 
   onPasswordChange = (event) => {
-    this.setState({ signInPassword: event.target.value })
-  }
+    this.setState({ signInPassword: event.target.value });
+  };
 
   onPasswordError = (showPasswordError) => {
     if (showPasswordError) {
-      this.setState({ showPasswordError: true, passwordErrorMessage: 'Password is a required field and must be between 8 - 10 characters.' })
-      this.passwordRef.current.classList.add('highlightClassInSignIn')
-      this.passwordRef.current.focus()
-      return
+      this.setState({
+        showPasswordError: true,
+        passwordErrorMessage:
+          "Password is a required field and must be between 8 - 10 characters.",
+      });
+      this.passwordRef.current.classList.add("highlightClassInSignIn");
+      this.passwordRef.current.focus();
+      return;
     }
-    this.setState({ showPasswordError: false })
-    this.passwordRef.current.classList.remove('highlightClassInSignIn')
-    return
-  }
+    this.setState({ showPasswordError: false });
+    this.passwordRef.current.classList.remove("highlightClassInSignIn");
+    return;
+  };
 
   onEnterKeyPressOnPassword = (event) => {
-    if (event.key === 'Enter' && this.state.signInPassword.length < 8) {
-      this.onPasswordError(true)
-    } else if (event.key === 'Enter' && !this.passwordRef.current.validity.valid) {
-      this.onPasswordError(true)
-    } else if (event.key === 'Enter' && this.state.signInPassword.length >= 8) {
-      this.onPasswordError(false)
-      if (this.state.signInEmail === '') {
-        this.emailRef.current.focus()
+    if (event.key === "Enter" && this.state.signInPassword.length < 8) {
+      this.onPasswordError(true);
+    } else if (
+      event.key === "Enter" &&
+      !this.passwordRef.current.validity.valid
+    ) {
+      this.onPasswordError(true);
+    } else if (event.key === "Enter" && this.state.signInPassword.length >= 8) {
+      this.onPasswordError(false);
+      if (this.state.signInEmail === "") {
+        this.emailRef.current.focus();
       } else {
-        this.onSubmitSignIn()
+        this.onSubmitSignIn();
       }
     }
-  }
+  };
 
   onSubmitForm = (event) => {
-    event.preventDefault()
-  }
+    event.preventDefault();
+  };
 
   onSubmitSignIn = () => {
     if (this.passwordRef.current.value.length < 8) {
-      this.onPasswordError(true)
+      this.onPasswordError(true);
     } else {
-      this.onPasswordError(false)
+      this.onPasswordError(false);
     }
-    if (this.state.signInEmail === '' || this.emailRef.current.validity.typeMismatch) {
-      this.onEmailError(true)
+    if (
+      this.state.signInEmail === "" ||
+      this.emailRef.current.validity.typeMismatch
+    ) {
+      this.onEmailError(true);
     } else {
-      this.onEmailError(false)
+      this.onEmailError(false);
     }
-    if (!this.state.showEmailError && !this.state.showPasswordError && this.state.signInEmail !== '' && this.state.signInPassword !== '') {
-      this.setState({ showSpinner: true })
+    if (
+      !this.state.showEmailError &&
+      !this.state.showPasswordError &&
+      this.state.signInEmail !== "" &&
+      this.state.signInPassword !== ""
+    ) {
+      this.setState({ showSpinner: true });
       fetch(`/signin`, {
-        method: 'post',
-        headers: { 'Content-Type': 'application/json' },
+        method: "post",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: this.state.signInEmail,
-          password: this.state.signInPassword
-        })
+          password: this.state.signInPassword,
+        }),
       })
-        .then(response => response.json())
-        .then(data => {
+        .then((response) => response.json())
+        .then((data) => {
           if (data && data.success === "true") {
-            this.props.saveAuthTokenInSession(data.token)
-            this.props.loadUser(data.user)
-            this.props.onRouteChange('home');
+            this.props.saveAuthTokenInSession(data.token);
+            this.props.loadUser(data.user);
+            this.props.onRouteChange("home");
           } else {
-            throw Error();
+            throw Error(data);
           }
         })
-        .catch(err => {
-          if (err) {
-            this.setState({
-              showError: true,
-              errorMessage: `Something went wrong. Please try again.`,
-              showSpinner: false
-            })
-          }
-        })
+        .catch((err) => {
+          this.setState({
+            showError: true,
+            errorMessage: `${err.message}`,
+            showSpinner: false,
+          });
+        });
     }
-  }
+  };
 
   render() {
     const { onRouteChange } = this.props;
@@ -155,12 +189,19 @@ class Signin extends React.Component {
           <div className="signinMeasure">
             <fieldset id="sign_up" className="signinFieldset">
               <legend className="signinLegend">Sign In</legend>
-              {
-                this.state.showError &&
+              {this.state.showError && (
                 <p className="signinErrorDisplay">{this.state.errorMessage}</p>
-              }
-              <div className="belowLegendDivInSignin" onSubmit={this.onSubmitForm}>
-                <label className="belowLegendLabelInSignin" htmlFor="email-address">Email</label>
+              )}
+              <div
+                className="belowLegendDivInSignin"
+                onSubmit={this.onSubmitForm}
+              >
+                <label
+                  className="belowLegendLabelInSignin"
+                  htmlFor="email-address"
+                >
+                  Email
+                </label>
                 <input
                   className="belowLegendInputInSignin"
                   type="email"
@@ -170,13 +211,19 @@ class Signin extends React.Component {
                   onChange={this.onEmailChange}
                   onKeyDown={this.onEnterKeyPressOnEmail}
                 />
-                {
-                  this.state.showEmailError &&
-                  <p className="signinErrorDisplay signinFieldsError">{this.state.emailErrorMessage}</p>
-                }
+                {this.state.showEmailError && (
+                  <p className="signinErrorDisplay signinFieldsError">
+                    {this.state.emailErrorMessage}
+                  </p>
+                )}
               </div>
-              <div className="belowLegendDivInSignin" onSubmit={this.onSubmitForm}>
-                <label className="belowLegendLabelInSignin" htmlFor="password">Password</label>
+              <div
+                className="belowLegendDivInSignin"
+                onSubmit={this.onSubmitForm}
+              >
+                <label className="belowLegendLabelInSignin" htmlFor="password">
+                  Password
+                </label>
                 <input
                   className="belowLegendInputInSignin"
                   type="password"
@@ -188,10 +235,11 @@ class Signin extends React.Component {
                   onChange={this.onPasswordChange}
                   onKeyDown={this.onEnterKeyPressOnPassword}
                 />
-                {
-                  this.state.showPasswordError === true &&
-                  <p className="signinErrorDisplay signinFieldsError">{this.state.passwordErrorMessage}</p>
-                }
+                {this.state.showPasswordError === true && (
+                  <p className="signinErrorDisplay signinFieldsError">
+                    {this.state.passwordErrorMessage}
+                  </p>
+                )}
               </div>
             </fieldset>
             <Spinner showSpinner={this.state.showSpinner} />
@@ -202,8 +250,18 @@ class Signin extends React.Component {
               value="Sign in"
             />
             <div className="belowSigninButtonDiv">
-              <p onClick={() => onRouteChange('forgot')} className="registerLinkInSignin">Forgot Password</p>
-              <p onClick={() => onRouteChange('register')} className="registerLinkInSignin">Register</p>
+              <p
+                onClick={() => onRouteChange("forgot")}
+                className="registerLinkInSignin"
+              >
+                Forgot Password
+              </p>
+              <p
+                onClick={() => onRouteChange("register")}
+                className="registerLinkInSignin"
+              >
+                Register
+              </p>
             </div>
           </div>
         </main>
