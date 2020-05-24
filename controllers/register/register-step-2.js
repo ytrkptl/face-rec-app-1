@@ -48,7 +48,11 @@ const handleRegister = (db, req, res) => {
       uniqueKey + "password"
     )
     .then((values) => {
-      console.log(values, confirmationId);
+      console.log(
+        values,
+        confirmationId,
+        " from register-step-2 line 51 = The confirmation code entered"
+      );
       let randomId = values[0].slice(0, 6);
       let name = values[1];
       let email = values[2];
@@ -72,15 +76,26 @@ const handleRegister = (db, req, res) => {
                     joined: new Date(),
                   })
                   .then((user) => user[0])
-                  .catch((err) => console.log(err));
+                  .catch((err) => console.log(err + " from line 79"));
               })
               .then(trx.commit)
               .catch(trx.rollback);
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            if (
+              err.message ===
+              `insert into "login" ("email", "hash") values ($1, $2) returning "email" - duplicate key value violates unique constraint "login_email_key"`
+            ) {
+              console.log("Email was taken from line 89");
+              return "Confirmation Id did not match.";
+            }
+          });
       }
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err + " Confirmation Id did not match. from line 96");
+      return "Confirmation Id did not match.";
+    });
 };
 
 const registerAuthentication = (db) => (req, res) => {
