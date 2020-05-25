@@ -113,7 +113,7 @@ class Profile extends React.Component {
               placeholder={user.name}
               type="text"
               name="user-name"
-              id="name"
+              id="user-name"
             />
             <label className="otherLabels" htmlFor="user-age">
               Age:{" "}
@@ -124,7 +124,7 @@ class Profile extends React.Component {
               placeholder={user.age}
               type="text"
               name="user-age"
-              id="age"
+              id="user-age"
             />
             <label className="otherLabels" htmlFor="user-pet">
               Pet:{" "}
@@ -135,7 +135,7 @@ class Profile extends React.Component {
               placeholder={user.pet}
               type="text"
               name="user-pet"
-              id="pet"
+              id="user-pet"
             />
             <div className="saveAndCancelButtonsDiv">
               <button
