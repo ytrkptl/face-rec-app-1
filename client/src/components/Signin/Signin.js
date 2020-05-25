@@ -1,4 +1,5 @@
 import React, { createRef } from "react";
+import { withRouter } from "react-router-dom";
 import Spinner from "../Spinner/Spinner";
 import "./Signin.css";
 
@@ -166,7 +167,7 @@ class Signin extends React.Component {
           if (data && data.success === "true") {
             this.props.saveAuthTokenInSession(data.token);
             this.props.loadUser(data.user);
-            this.props.onRouteChange("home");
+            this.props.toggleSignIn(true);
           } else {
             throw Error(data);
           }
@@ -182,7 +183,6 @@ class Signin extends React.Component {
   };
 
   render() {
-    const { onRouteChange } = this.props;
     return (
       <article className="signinArticle">
         <main className="signinMain">
@@ -253,13 +253,13 @@ class Signin extends React.Component {
             />
             <div className="belowSigninButtonDiv">
               <p
-                onClick={() => onRouteChange("forgot")}
+                onClick={() => this.props.history.push("forgot")}
                 className="registerLinkInSignin"
               >
                 Forgot Password
               </p>
               <p
-                onClick={() => onRouteChange("register")}
+                onClick={() => this.props.history.push("register")}
                 className="registerLinkInSignin"
               >
                 Register
@@ -272,4 +272,4 @@ class Signin extends React.Component {
   }
 }
 
-export default Signin;
+export default withRouter(Signin);
