@@ -2,14 +2,17 @@ import React from "react";
 import ProfileIcon from "../Profile/ProfileIcon";
 import Logo from "../Logo/Logo";
 import "./Navigation.css";
+import { useHistory } from "react-router-dom";
 
 const Navigation = ({
-  onRouteChange,
   isSignedIn,
   toggleModal,
   profilePhotoUrl,
   showLightning,
+  signOut,
 }) => {
+  const history = useHistory();
+
   if (isSignedIn) {
     return (
       <nav className="nav">
@@ -17,8 +20,8 @@ const Navigation = ({
         <div className="gridCol2">
           <ProfileIcon
             profilePhotoUrl={profilePhotoUrl}
-            onRouteChange={onRouteChange}
             toggleModal={toggleModal}
+            signOut={signOut}
           />
         </div>
       </nav>
@@ -28,14 +31,11 @@ const Navigation = ({
       <nav className="nav">
         <Logo showLightning={showLightning} />
         <div className="divInNav">
-          <button
-            onClick={() => onRouteChange("signin")}
-            className="customLink"
-          >
+          <button onClick={() => history.push("signin")} className="customLink">
             Sign In
           </button>
           <button
-            onClick={() => onRouteChange("register")}
+            onClick={() => history.push("register")}
             className="customLink"
           >
             Register

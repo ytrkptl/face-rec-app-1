@@ -16,6 +16,7 @@
     "react-ga": "^2.6.0",
     "react-particles-js": "^2.7.0",
     "react-remove-scroll": "^2.2.0",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "2.1.5",
     "react-tilt": "^0.1.4",
     "reactstrap": "^8.0.1"
