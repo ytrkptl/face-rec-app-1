@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 import { RemoveScroll } from "react-remove-scroll";
 import ParticlesComponent from "../components/Particles/Particles";
 import Navigation from "../components/Navigation/Navigation";
@@ -28,7 +29,6 @@ const client = filestack.init(`${process.env.REACT_APP_FILESTACK}`);
 const initialState = {
   imageUrl: "",
   boxes: [],
-  route: "signin",
   isSignedIn: false,
   isProfileOpen: false,
   lightningOn: false,
@@ -75,7 +75,7 @@ class App extends Component {
               .then((user) => {
                 if (user && user.email) {
                   this.loadUser(user);
-                  this.onRouteChange("home");
+                  this.toggleSignIn(true);
                 }
               })
               .catch((err) =>
@@ -199,36 +199,24 @@ class App extends Component {
       );
   };
 
-  onRouteChange = (route) => {
-    if (route === "signout") {
-      this.setState(initialState);
-      // removeAuthTokenFromSession will remove the
-      // token from the browser,
-      // however we also need to remove it from redis in backend
-      // therefore the below fetch function, which removes it from
-      // redis first and then calls the removeAuthTokenFromSession func
-      // above
-      fetch(`/signout`, {
+  signOut = async () => {
+    this.setState(initialState);
+    try {
+      const response = await fetch(`/signout`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Authorization: window.sessionStorage.getItem("token"),
         },
-      })
-        .then((response) => response.json())
-        .then((value) => {
-          if (value) {
-            this.removeAuthTokenFromSession("token");
-          }
-        })
-        .catch((error) =>
-          console.log(`error onRouteChange in App.js line 202`)
-        );
-      return;
-    } else if (route === "home") {
-      this.setState({ isSignedIn: true });
+      });
+      const value = await response.json();
+      if (value) {
+        this.removeAuthTokenFromSession("token");
+        this.toggleSignIn(false);
+      }
+    } catch (error) {
+      return console.log(`error onRouteChange in App.js line 202`);
     }
-    this.setState({ route: route });
   };
 
   toggleModal = () => {
@@ -264,7 +252,6 @@ class App extends Component {
             .then((user) => {
               if (user && user.email) {
                 this.loadUser(user);
-                this.onRouteChange("home");
               }
             });
         }
@@ -281,11 +268,15 @@ class App extends Component {
     }));
   };
 
+  toggleSignIn = (val) => {
+    this.setState({ isSignedIn: val });
+    val ? this.props.history.push("/") : this.props.history.push("/signin");
+  };
+
   render() {
     const {
       isSignedIn,
       imageUrl,
-      route,
       boxes,
       isProfileOpen,
       lightningOn,
@@ -303,10 +294,10 @@ class App extends Component {
         <Navigation
           className="row1"
           isSignedIn={isSignedIn}
-          onRouteChange={this.onRouteChange}
           toggleModal={this.toggleModal}
           profilePhotoUrl={profilePhotoUrl}
           showLightning={this.showLightning}
+          signOut={this.signOut}
         />
         {isProfileOpen && (
           <Modal>
@@ -319,35 +310,53 @@ class App extends Component {
                 changeProfileImage={this.changeProfileImage}
                 client={client}
                 user={user}
+                signOut={this.signOut}
               />
             </RemoveScroll>
           </Modal>
         )}
         <div className="row2">
-          {route === "home" && (
-            <div className="rankAndImageFormWrapper">
-              <Rank name={user.name} entries={user.entries} />
-              <UploadButtonWithPicker
-                changeImageUrl={this.changeImageUrl}
-                client={client}
-              />
-              <FaceRecognition boxes={boxes} imageUrl={imageUrl} />
-            </div>
-          )}
-          {route === "signin" && (
-            <Signin
-              loadUser={this.loadUser}
-              saveAuthTokenInSession={this.saveAuthTokenInSession}
-              onRouteChange={this.onRouteChange}
+          <Switch>
+            <Route exact path="/">
+              {isSignedIn ? (
+                <div className="rankAndImageFormWrapper">
+                  <Rank name={user.name} entries={user.entries} />
+                  <UploadButtonWithPicker
+                    changeImageUrl={this.changeImageUrl}
+                    client={client}
+                  />
+                  <FaceRecognition boxes={boxes} imageUrl={imageUrl} />
+                </div>
+              ) : (
+                <Redirect to="/signin" />
+              )}
+            </Route>
+            <Route
+              exact
+              path="/signin"
+              render={() => {
+                return (
+                  <Signin
+                    loadUser={this.loadUser}
+                    saveAuthTokenInSession={this.saveAuthTokenInSession}
+                    toggleSignIn={this.toggleSignIn}
+                  />
+                );
+              }}
             />
-          )}
-          {route === "register" && (
-            <Register
-              loadUser={this.loadUser}
-              onRouteChange={this.onRouteChange}
+            <Route
+              exact
+              path="/register"
+              render={() => <Register loadUser={this.loadUser} />}
             />
-          )}
-          {route === "forgot" && <Forgot onRouteChange={this.onRouteChange} />}
+            <Route
+              exact
+              path="/forgot"
+              render={() => {
+                return <Forgot />;
+              }}
+            />
+          </Switch>
         </div>
         <Footer className="row3" />
       </div>
@@ -355,4 +364,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withRouter(App);
