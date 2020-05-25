@@ -50,6 +50,11 @@
   box-sizing: border-box;
 }
 
+.register-steps {
+  color: blue;
+  font-weight: bold;
+}
+
 .registerErrorDisplay {
   color: red;
   font-family: "Roboto", sans-serif;

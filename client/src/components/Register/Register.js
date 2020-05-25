@@ -1,6 +1,7 @@
 import React, { createRef } from "react";
 import Spinner from "../Spinner/Spinner";
 import "./Register.css";
+import { withRouter } from "react-router-dom";
 
 class Register extends React.Component {
   constructor(props) {
@@ -350,7 +351,7 @@ class Register extends React.Component {
               .then((user) => {
                 if (user && user.email) {
                   this.props.loadUser(user);
-                  this.props.onRouteChange("home");
+                  this.props.history.push("/");
                 }
               })
               .catch((err) => {
@@ -423,7 +424,7 @@ class Register extends React.Component {
           <div className="registerMeasure">
             <fieldset id="sign_up" className="registerFieldset">
               <legend className="registerLegend">Register</legend>
-              <h4 className="steps">{`Step ${this.state.registerStepNum} of 2`}</h4>
+              <h4 className="register-steps">{`Step ${this.state.registerStepNum} of 2`}</h4>
               {this.state.showError && (
                 <p className="registerErrorDisplay">
                   {this.state.errorMessage}
@@ -560,7 +561,7 @@ class Register extends React.Component {
               )}
               <span
                 ref={this.signinLinkRef}
-                onClick={() => this.props.onRouteChange("signin")}
+                onClick={() => this.props.history.push("signin")}
                 className="signinLinkInRegister"
               >
                 Sign In
@@ -573,4 +574,4 @@ class Register extends React.Component {
   }
 }
 
-export default Register;
+export default withRouter(Register);
