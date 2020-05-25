@@ -1,6 +1,6 @@
-# Face-rec-mono-app
+# Face-rec-app-1
 
-This is basically a monolithic face recognition app built using React and Express. This root folder includes both client folder and the server files.
+This is a face recognition app built using React and Express. This root folder includes both client folder and the server files.
 
 ## server
 
@@ -10,9 +10,9 @@ The server is built using Express.
 
 The frontend is built using create-react-app.
 
-## Instructions for setting up the POSTGRES db
+## Instructions for setting up the POSTGRES db on Heroku
 
-- Assuming that you Heroku and add heroku-postgres add-on to your heroku project
+- If you are using Heroku and have added the heroku-postgres add-on to your heroku project
 
   - from the root of the folder
   - inside the terminal
@@ -50,8 +50,8 @@ the link above is just for help but do not follow it verbatim.
 - Be sure to replace ADMIN_NAME, ADMIN_EMAIL, with their values instead.
 - Be sure to replace ADMIN_HASH with a hash generated using a site like <https://bcrypt-generator.com/> . You can use your desired password on that site to generate a hash and store the hash in the database instead of storing the password.
 - Use proper date for joined value as well.
-- The block below SHOULD NOT be directly run or copy-pasted. First read the note above and replace appropriate values in the commands below. Then run the commands below in the terminal.
 
+> The block below SHOULD NOT be directly run or copy-pasted. First read the note above and replace appropriate values in the commands below. Then run the commands below in the terminal.
 
     BEGIN TRANSACTION;
     INSERT into admin (name, email, joined) values ('ADMIN_NAME', 'ADMIN_EMAIL', '2019-09-07');
