@@ -198,7 +198,7 @@ class Signin extends React.Component {
               >
                 <label
                   className="belowLegendLabelInSignin"
-                  htmlFor="email-address"
+                  htmlFor="sign-in-email-address"
                 >
                   Email
                 </label>
@@ -206,6 +206,7 @@ class Signin extends React.Component {
                   className="belowLegendInputInSignin"
                   type="email"
                   name="email-address"
+                  id="sign-in-email-address"
                   required
                   ref={this.emailRef}
                   onChange={this.onEmailChange}
@@ -227,6 +228,7 @@ class Signin extends React.Component {
                 <input
                   className="belowLegendInputInSignin"
                   type="password"
+                  id="password"
                   name="password"
                   required
                   ref={this.passwordRef}
