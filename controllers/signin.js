@@ -51,20 +51,18 @@ const checkPassword = async (bcrypt, password, hash) => {
   }
 };
 
-const getAuthTokenId = (req, res) => {
+const getAuthTokenId = async (req, res) => {
   const { authorization } = req.headers;
-  return redisHelper
-    .getToken(authorization)
-    .then((reply) => {
-      if (reply === null) {
-        throw new Error("Unauthorized");
-      }
-      res.status(200).json({ id: reply });
-    })
-    .catch((e) => {
-      console.log(e + " from line 67");
-      res.status(401).json("Unauthorized");
-    });
+  try {
+    const reply = await redisHelper.getToken(authorization);
+    if (reply === null) {
+      throw new Error("Unauthorized");
+    }
+    res.status(200).json({ id: reply });
+  } catch (e) {
+    console.log(e + " from line 67");
+    res.status(401).json("Unauthorized");
+  }
 };
 
 const signinAuthentication = (db, bcrypt) => async (req, res) => {
