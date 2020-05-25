@@ -42,7 +42,6 @@ class Profile extends React.Component {
         if (resp.status === 200 || resp.status === 304) {
           this.props.toggleModal();
           this.props.loadUser({ ...this.props.user, ...data });
-          this.props.history.push("/");
         }
       })
       .catch((e) => {
