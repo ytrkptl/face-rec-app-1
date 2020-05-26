@@ -39,7 +39,7 @@ the link above is just for help but do not follow it verbatim.
 > the block below can be run as-is or directly copy-pasted in the terminal
 
     BEGIN TRANSACTION;
-    CREATE TABLE admin (
+    CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100),
     email text UNIQUE NOT NULL,
