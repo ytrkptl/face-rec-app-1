@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 import { RemoveScroll } from "react-remove-scroll";
-import ParticlesComponent from "../components/Particles/Particles";
+// import ParticlesComponent from "../components/Particles/Particles";
 import Navigation from "../components/Navigation/Navigation";
 import FaceRecognition from "../components/FaceRecognition/FaceRecognition";
 import Signin from "../components/Signin/Signin";
@@ -287,7 +287,7 @@ class App extends Component {
       <div className="App">
         {lightningOn && (
           <>
-            <ParticlesComponent lightningOn={lightningOn} />
+            {/* <ParticlesComponent lightningOn={lightningOn} /> */}
             <Lightning lightningOn={lightningOn} />
           </>
         )}
