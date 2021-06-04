@@ -24,7 +24,7 @@ class Rank extends React.Component {
 		if (Number(entries) === 0) {
 			this.setState({ emoji: 'None' })
 		} else {
-			fetch(`${process.env.REACT_APP_LAMBDA_RANK_QUERY}${entries}`)
+			fetch(`${process.env.REACT_APP_LAMBDA_RANK_QUERY_2}${entries}`)
 				.then(response => response.json())
 				.then(data => this.setState({ emoji: data.input }))
 				.catch(err => console.log('error occured fetching rank badge'))
