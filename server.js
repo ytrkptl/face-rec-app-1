@@ -5,6 +5,7 @@ const enforce = require("express-sslify");
 const compression = require("compression");
 const path = require("path");
 const routes = require("./routes");
+const errorHandler = require("./controllers/error/error.js");
 
 if (process.env.NODE_ENV !== "production") require("dotenv").config();
 
@@ -32,6 +33,16 @@ app.get("/service-worker.js", (req, res) => {
 });
 
 app.use(routes);
+
+// error Handler middlerware. Must keep it down here at the very end before app.listen
+app.use((req, res, next) => {
+  let err = new Error("Not Found");
+  console.log(err);
+  err.status = 404;
+  next(err);
+});
+
+app.use(errorHandler);
 
 app.listen(port, (error) => {
   if (error) throw error;
