@@ -14,7 +14,7 @@
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-ga": "^2.6.0",
-    "react-particles-js": "^2.7.0",
+    "react-particles-js": "^3.4.1",
     "react-remove-scroll": "^2.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "2.1.5",
