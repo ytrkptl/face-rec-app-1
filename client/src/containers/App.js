@@ -110,7 +110,7 @@ class App extends Component {
       data.handle === undefined ||
       data.handle === null
     ) {
-      this.setState({ profilePhotoUrl: "http://tachyons.io/img/logo.jpg" });
+      this.setState({ profilePhotoUrl: "https://avatar-letter.herokuapp.com/api/file/set1/tiny/u/png" });
     } else {
       this.setState({
         profilePhotoUrl: `https://cdn.filestackcontent.com/resize=height:200,width:200/${data.handle}`,
