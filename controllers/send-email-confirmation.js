@@ -1,7 +1,7 @@
 "use strict";
 const sgMail = require("@sendgrid/mail");
 if (process.env.NODE_ENV !== "production") require("dotenv").config();
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+sgMail.setApiKey(process.env.FACE_REC_APP_1_SG_API_KEY);
 
 const handleSendingEmailConfirmation = (someToken, req, res) => {
   const { email } = req.body;
