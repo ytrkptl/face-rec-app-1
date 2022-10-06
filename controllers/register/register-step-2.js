@@ -36,75 +36,79 @@ const createSession = (user) => {
     .catch((err) => console.log(err));
 };
 
-const handleRegister = (db, req, res) => {
-  const { confirmationId } = req.body;
-  let uniqueKey = confirmationId + " ";
+const runTransaction = async (name, email, hash) => {
+  return db
+    .transaction((trx) => {
+      trx
+        .insert({
+          hash: hash,
+          email: email,
+        })
+        .into("login")
+        .returning("email")
+        .then((loginEmail) => {
+          return trx("users")
+            .returning("*")
+            .insert({
+              email: loginEmail[0],
+              name: name,
+              joined: new Date(),
+            })
+            .then((user) => user[0])
+            .catch((err) => console.log(err + " from line 79"));
+        })
+        .then(trx.commit)
+        .catch(trx.rollback);
+    })
+    .catch((err) => {
+      if (
+        err.message ===
+        `insert into "login" ("email", "hash") values ($1, $2) returning "email" - duplicate key value violates unique constraint "login_email_key"`
+      ) {
+        console.log("Email was taken from line 89");
+        return "Confirmation Id did not match.";
+      }
+    });
+};
 
-  return redisHelper
-    .getMultipleValues(
+const handleRegister = async (confirmationId) => {
+  try {
+    let uniqueKey = confirmationId + " ";
+    const multipleValues = redisHelper.getMultipleValues(
       uniqueKey + "randomId",
       uniqueKey + "name",
       uniqueKey + "email",
       uniqueKey + "password"
-    )
-    .then((values) => {
-      console.log(
-        values,
-        confirmationId,
-        " from register-step-2 line 51 = The confirmation code entered"
-      );
-      let randomId = values[0].slice(0, 6);
-      let name = values[1];
-      let email = values[2];
-      let hash = values[3];
-      if (randomId === confirmationId) {
-        return db
-          .transaction((trx) => {
-            trx
-              .insert({
-                hash: hash,
-                email: email,
-              })
-              .into("login")
-              .returning("email")
-              .then((loginEmail) => {
-                return trx("users")
-                  .returning("*")
-                  .insert({
-                    email: loginEmail[0],
-                    name: name,
-                    joined: new Date(),
-                  })
-                  .then((user) => user[0])
-                  .catch((err) => console.log(err + " from line 79"));
-              })
-              .then(trx.commit)
-              .catch(trx.rollback);
-          })
-          .catch((err) => {
-            if (
-              err.message ===
-              `insert into "login" ("email", "hash") values ($1, $2) returning "email" - duplicate key value violates unique constraint "login_email_key"`
-            ) {
-              console.log("Email was taken from line 89");
-              return "Confirmation Id did not match.";
-            }
-          });
-      }
-    })
-    .catch((err) => {
-      console.log(err + " Confirmation Id did not match. from line 96");
+    );
+    let randomId = multipleValues[0].slice(0, 6);
+    let name = multipleValues[1];
+    let email = multipleValues[2];
+    let hash = multipleValues[3];
+    if (randomId !== confirmationId) {
       return "Confirmation Id did not match.";
-    });
+    }
+    return await runTransaction(name, email, hash);
+  } catch (error) {
+    console.log(err + " Confirmation Id did not match. from line 96");
+    return "Confirmation Id did not match.";
+  }
 };
 
-const registerAuthentication = (db) => (req, res) => {
-  return handleRegister(db, req, res)
-    .then((data) =>
-      data.id && data.email ? createSession(data) : Promise.reject(data)
-    )
-    .then((session) => res.json(session))
-    .catch((err) => res.status(400).json(err));
+const registerAuthentication = async (db, req, res) => {
+  const { confirmationId } = req.body;
+  try {
+    const result = await handleRegister(db, confirmationId);
+    if (result === "Confirmation Id did not match.") {
+      return res.status(400).json(result);
+    }
+    if (result.id && result.email) {
+      const session = await createSession(result);
+      return res.json(session);
+    }
+    return Promise.reject(result);
+  } catch (error) {
+    return res.status(400).json(error.message);
+  }
 };
 
 module.exports = {
