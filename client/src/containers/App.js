@@ -110,7 +110,10 @@ class App extends Component {
       data.handle === undefined ||
       data.handle === null
     ) {
-      this.setState({ profilePhotoUrl: "https://avatar-letter.herokuapp.com/api/file/set1/big/u/png" });
+      this.setState({
+        profilePhotoUrl:
+          "https://avatar-letter.herokuapp.com/api/file/set1/big/u/png",
+      });
     } else {
       this.setState({
         profilePhotoUrl: `https://cdn.filestackcontent.com/resize=height:200,width:200/${data.handle}`,
@@ -186,7 +189,12 @@ class App extends Component {
           })
             .then((response) => response.json())
             .then((count) => {
-              this.setState(Object.assign(this.state.user, { entries: count }));
+              this.setState((prevState) => ({
+                user: {
+                  ...prevState.user,
+                  entries: count,
+                },
+              }));
             })
             .catch((err) =>
               console.log(`error onButtonSubmit method in App.js line 173`)
