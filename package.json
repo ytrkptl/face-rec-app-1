@@ -2,8 +2,8 @@
   "name": "face-rec-app",
   "version": "1.0.0",
   "engines": {
-    "node": "12.14.1",
-    "npm": "6.13.6"
+    "node": "v16.13.1",
+    "npm": "8.3.0"
   },
   "description": "",
   "dependencies": {
@@ -16,9 +16,9 @@
     "express": "^4.17.1",
     "express-sslify": "^1.2.0",
     "jsonwebtoken": "^8.5.1",
-    "knex": "^0.19.5",
+    "knex": "^0.21.1",
     "morgan": "^1.10.0",
-    "pg": "^7.18.2",
+    "pg": "^8.0.3",
     "redis": "^3.1.2",
     "request": "^2.88.2"
   },
