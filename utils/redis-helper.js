@@ -52,11 +52,11 @@ const getToken = (key) => {
 // to accept only 4 keys
 const getMultipleValues = (key1, key2, key3, key4) => {
   return new Promise((resolve, reject) => {
-    redisClient.mget(key1, key2, key3, key4, function (error, result) {
+    redisClient.mget([key1, key2, key3, key4], function (error, result) {
       if (error) {
-        reject(error);
-      }
-      resolve(result);
+        return reject(error);
+      } 
+      return resolve(result);
     });
   }).catch((err) =>
     console.log(

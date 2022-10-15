@@ -324,62 +324,69 @@ class Register extends React.Component {
   };
 
   onRegisterStep2 = async () => {
-    if (this.state.registerConfirmationId === "") {
-      this.onConfirmationIdError(true);
-    } else {
+    try {
+      if (this.state.registerConfirmationId === "") {
+        this.onConfirmationIdError(true);
+        return;
+      }
       this.onConfirmationIdError(false);
       this.setState({ showSpinner: true });
-      fetch(`/register-step-2`, {
+      const response = await fetch(`/register-step-2`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           confirmationId: this.state.registerConfirmationId,
         }),
-      })
-        .then((resp) => resp.json())
-        .then((data) => {
-          if (data.userId && data.success === "true") {
-            this.saveAuthTokenInSession(data.token);
-            fetch(`/profile/${data.userId}`, {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: data.token,
-              },
-            })
-              .then((resp) => resp.json())
-              .then((user) => {
-                if (user && user.email) {
-                  this.props.loadUser(user);
-                  this.props.history.push("/");
-                }
-              })
-              .catch((err) => {
-                if (err) {
-                  this.setState({
-                    showError: true,
-                    errorMessage: `Something went wrong. Please try again.`,
-                    showSpinner: false,
-                  });
-                }
-              });
-          } else {
-            this.setState({
-              showError: true,
-              errorMessage: `${data}`,
-              showSpinner: false,
-            });
-          }
-        })
-        .catch((err) => {
-          if (err) {
-            this.setState({
-              showError: true,
-              errorMessage: `Something went wrong. Please try again.`,
-              showSpinner: false,
-            });
-          }
+      });
+      const data = await response.json();
+      if (data.userId && data.success === 200) {
+        this.saveAuthTokenInSession(data.token);
+        await this.getProfileAndSignIn(data);
+        return;
+      } else {
+        this.setState({
+          showError: true,
+          errorMessage: `${data}`,
+          showSpinner: false,
         });
+      }
+    } catch (error) {
+      this.setState({
+        showError: true,
+        errorMessage: `Something went wrong. Please try again.`,
+        showSpinner: false,
+      });
+    }
+  };
+
+  getProfileAndSignIn = async (data) => {
+    try {
+      const resp = await fetch(`/profile/${data.userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: data.token,
+        },
+      });
+      const user = await resp.json();
+      if (process.env.NODE_ENV !== "production") {
+        console.log(resp, user);
+      }
+      if (user && user.email) {
+        this.props.loadUser(user);
+        this.props.toggleSignIn(true);
+      } else {
+        throw new Error("Something went wrong");
+      }
+    } catch (error) {
+      if (process.env.NODE_ENV !== "production") {
+        console.log(error);
+      }
+      this.setState({
+        showError: true,
+        errorMessage: `Something went wrong. Please try again.`,
+        showSpinner: false,
+      });
     }
   };
 
@@ -406,14 +413,15 @@ class Register extends React.Component {
         });
         this.signinLinkRef.current.classList.remove("step2Link");
       })
-      .catch((err) => {
-        if (err) {
-          this.setState({
-            showError: true,
-            showSpinner: false,
-            registerStepNum: 1,
-          });
+      .catch((error) => {
+        if (process.env.NODE_ENV !== "production") {
+          console.log(error);
         }
+        this.setState({
+          showError: true,
+          showSpinner: false,
+          registerStepNum: 1,
+        });
       });
   };
 

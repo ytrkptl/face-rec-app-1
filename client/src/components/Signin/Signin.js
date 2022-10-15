@@ -169,7 +169,7 @@ class Signin extends React.Component {
             this.props.loadUser(data.user);
             this.props.toggleSignIn(true);
           } else {
-            throw Error(data);
+            throw new Error("Something went wrong");
           }
         })
         .catch((err) => {

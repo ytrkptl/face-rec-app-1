@@ -355,7 +355,13 @@ class App extends Component {
             <Route
               exact
               path="/register"
-              render={() => <Register loadUser={this.loadUser} />}
+              render={() => (
+                <Register
+                  loadUser={this.loadUser}
+                  saveAuthTokenInSession={this.saveAuthTokenInSession}
+                  toggleSignIn={this.toggleSignIn}
+                />
+              )}
             />
             <Route
               exact
