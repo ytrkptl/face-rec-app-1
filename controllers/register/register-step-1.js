@@ -1,6 +1,6 @@
 const redisHelper = require("../../utils/redis-helper");
-const handleSendingEmailConfirmation = require("../send-email-confirmation")
-  .handleSendingEmailConfirmation;
+const handleSendingEmailConfirmation =
+  require("../send-email-confirmation").handleSendingEmailConfirmation;
 const randomIdFunc = require("../../utils/other-helper").getSixDigitCode;
 
 let messageToSend = `If the email you provided is valid, you'll receive a 6-digit 
@@ -11,12 +11,31 @@ checks to see if that email exists in database. If yes, sends the user
 an email with a confirmationId and a success status of 200. If no, sends the users
 no emails but still with a success status of 200. This will keep anyone from 
 figuring out what emails exist in our database */
-const handleRegisterWithEmail = (db, bcrypt, req, res) => {
+const handleRegisterWithEmail = async (db, bcrypt, req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
     return res.status(400).json("Please fill out a valid form.");
   }
+
+  // create table if not exists
+  await db.schema
+    .withSchema("public")
+    .hasTable("users")
+    .then(function (exists) {
+      if (!exists) {
+        return db.schema.createTable("users", function (t) {
+          t.increments("id").primary();
+          t.string("name", 100).notNullable();
+          t.text("email", 100).unique().notNullable();
+          t.integer("entries").defaultTo(0);
+          t.string("pet");
+          t.integer("age");
+          t.string("handle", 255);
+          t.date("joined");
+        });
+      }
+    });
 
   db.select("id", "email")
     .from("users")
@@ -30,7 +49,8 @@ const handleRegisterWithEmail = (db, bcrypt, req, res) => {
       }
     })
     .catch((err) => {
-      return res.status(400).json(err.message);
+      console.log(err);
+      return res.status(400).json("Something went wrong");
     });
 };
 
@@ -50,7 +70,6 @@ const checkIfEmailExistsInRedis = (name, email, passwordEnc, req, res) => {
     "requestCount",
   ];
   let someVals = [randomId, name, randomId, passwordEnc, email, 1];
-
   redisHelper
     .keyExists(email)
     .then((x) => {

@@ -1,5 +1,6 @@
 const jwt = require("../../utils/jwt-helpers").jwt;
 const redisHelper = require("../../utils/redis-helper");
+const db = require("../../db");
 
 //numeric values are interpreted as seconds in jsonwebtoken
 // 900 seconds equals 15 minutes
@@ -31,12 +32,26 @@ const createSession = (user) => {
   return redisHelper
     .setToken(token, id)
     .then(() => {
-      return { success: "true", userId: id, token, user };
+      return { success: 200, userId: id, token, user };
     })
     .catch((err) => console.log(err));
 };
 
 const runTransaction = async (name, email, hash) => {
+  // create table if not exists
+  await db.schema
+    .withSchema("public")
+    .hasTable("login")
+    .then(function (exists) {
+      if (!exists) {
+        return db.schema.createTable("login", function (t) {
+          t.increments("id").primary();
+          t.string("hash").notNullable();
+          t.text("email", 100).unique().notNullable();
+        });
+      }
+    });
+
   return db
     .transaction((trx) => {
       trx
@@ -74,7 +89,7 @@ const runTransaction = async (name, email, hash) => {
 const handleRegister = async (confirmationId) => {
   try {
     let uniqueKey = confirmationId + " ";
-    const multipleValues = redisHelper.getMultipleValues(
+    const multipleValues = await redisHelper.getMultipleValues(
       uniqueKey + "randomId",
       uniqueKey + "name",
       uniqueKey + "email",
@@ -89,15 +104,15 @@ const handleRegister = async (confirmationId) => {
     }
     return await runTransaction(name, email, hash);
   } catch (error) {
-    console.log(err + " Confirmation Id did not match. from line 96");
+    console.log(error + " Confirmation Id did not match. from line 96");
     return "Confirmation Id did not match.";
   }
 };
 
-const registerAuthentication = async (db, req, res) => {
+const registerAuthentication = async (req, res) => {
   const { confirmationId } = req.body;
   try {
-    const result = await handleRegister(db, confirmationId);
+    const result = await handleRegister(confirmationId);
     if (result === "Confirmation Id did not match.") {
       return res.status(400).json(result);
     }

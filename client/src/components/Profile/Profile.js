@@ -9,6 +9,7 @@ class Profile extends React.Component {
       name: this.props.user.name,
       age: this.props.user.age,
       pet: this.props.user.pet,
+      url: this.props.profilePhotoUrl,
       handle: this.props.user.handle,
     };
   }
@@ -41,6 +42,7 @@ class Profile extends React.Component {
       .then((resp) => {
         if (resp.status === 200 || resp.status === 304) {
           this.props.toggleModal();
+          this.props.changeProfileImage(this.state.url, this.state.handle);
           this.props.loadUser({ ...this.props.user, ...data });
         }
       })
@@ -54,7 +56,7 @@ class Profile extends React.Component {
     const options = {
       maxFiles: 1,
       uploadInBackground: false,
-      onOpen: () => console.log("opened!"),
+      onOpen: () => {},
       onUploadDone: (res) => uploadPhotoFunction(res),
     };
 
@@ -71,7 +73,7 @@ class Profile extends React.Component {
         )
           .then((resp) => {
             let url = resp.url;
-            this.props.changeProfileImage(url, HANDLE);
+            this.setState({ url, handle: HANDLE });
           })
           .catch((err) => console.log(`error uploading photo`));
       }
@@ -79,15 +81,15 @@ class Profile extends React.Component {
   };
 
   render() {
-    const { user, profilePhotoUrl } = this.props;
-    const { name, age, pet, handle } = this.state;
+    const { user } = this.props;
+    const { name, age, pet, handle, url } = this.state;
     return (
       <div className="profile-modal">
         <article className="responsive">
           <main className="main">
             <div className="centerThatDiv">
               <img
-                src={profilePhotoUrl}
+                src={url}
                 name="user-photo"
                 className="avatarImageInProfile"
                 alt="avatar"

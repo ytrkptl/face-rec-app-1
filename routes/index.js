@@ -27,7 +27,9 @@ router.post("/register-step-1", (req, res) =>
   registerStepOne.handleRegisterWithEmail(db, bcrypt, req, res)
 );
 
-router.post("/register-step-2", registerStepTwo.registerAuthentication(db));
+router.post("/register-step-2", (req, res) =>
+  registerStepTwo.registerAuthentication(req, res)
+);
 
 router.post("/forgot", (req, res) => {
   forgot.handleForgotPassword(db, req, res);
