@@ -1,6 +1,8 @@
 "use strict";
-const sgMail = require("@sendgrid/mail");
+import sgMail from "@sendgrid/mail";
+
 if (process.env.NODE_ENV !== "production") require("dotenv").config();
+
 sgMail.setApiKey(process.env.FACE_REC_APP_1_SG_API_KEY);
 
 const handleSendingEmail = (someToken, req, res) => {
@@ -52,6 +54,6 @@ const handleSendingEmail = (someToken, req, res) => {
     });
 };
 
-module.exports = {
-  handleSendingEmail,
+export default {
+  handleSendingEmail
 };

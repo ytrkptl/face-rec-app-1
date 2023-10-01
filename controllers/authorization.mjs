@@ -1,4 +1,4 @@
-const redisHelper = require('../utils/redis-helper');
+import { getToken } from '../utils/redis-helper.mjs';
 
 const requireAuth = (req, res, next) => {
   const { authorization } = req.headers;
@@ -6,13 +6,13 @@ const requireAuth = (req, res, next) => {
     return res.status(401).json('Unauthorized');
   }
 
-  return redisHelper.getToken(authorization)
+  return getToken(authorization)
     .then(next())
     .catch(e => {
       return res.status(401).json('Unauthorized')
     })
 }
 
-module.exports = {
+export default {
   requireAuth
 }

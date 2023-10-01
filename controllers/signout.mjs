@@ -1,9 +1,9 @@
-const redisHelper = require('../utils/redis-helper');
+import { deleteToken } from '../utils/redis-helper.mjs';
 
 const removeAuthToken = (req, res) => {
   const { authorization } = req.headers;
   if (authorization) {
-    return redisHelper.deleteToken(authorization)
+    return deleteToken(authorization)
       .then(response => {
         return res.status(200).json(response)
       })
@@ -12,6 +12,4 @@ const removeAuthToken = (req, res) => {
   return res.status(400).json('No users are logged in.')
 }
 
-module.exports = {
-  removeAuthToken
-}
+export default { removeAuthToken }

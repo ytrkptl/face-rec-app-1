@@ -1,5 +1,8 @@
-const signToken = require("../utils/jwt-helpers").signToken;
-const redisHelper = require("../utils/redis-helper");
+import { signToken } from "../utils/jwt-helpers.mjs";
+import { 
+  setTokenWithEx, 
+  getToken
+} from "../utils/redis-helper.mjs";
 
 const createSession = async (user) => {
   const { email, id } = user;
@@ -88,6 +91,6 @@ const signinAuthentication = (db, bcrypt) => async (req, res) => {
   }
 };
 
-module.exports = {
-  signinAuthentication,
+export default {
+  signinAuthentication
 };

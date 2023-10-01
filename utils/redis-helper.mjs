@@ -1,8 +1,8 @@
 // Redis Setup
-const redis = require("redis");
+import { createClient } from "redis";
 
 // You will want to update your host to the proper address in production
-const redisClient = redis.createClient(process.env.REDIS_URL);
+const redisClient = createClient(process.env.REDIS_URL);
 
 // use the following function to set a key value pair in redis
 const setToken = (key, value) => {
@@ -168,7 +168,7 @@ const setMultipleValuesWithEx = (someKeys, someVals) => {
   });
 };
 
-module.exports = {
+export default {
   getToken,
   setToken,
   setTokenWithEx,

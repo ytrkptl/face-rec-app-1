@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
 //numeric values are interpreted as seconds in jsonwebtoken
 // 900 seconds equals 15 minutes
@@ -24,8 +24,8 @@ const verifyTokenExpiration = (token) => {
   });
 };
 
-module.exports = {
+export default {
   jwt,
   signToken,
   verifyTokenExpiration,
-};
+}

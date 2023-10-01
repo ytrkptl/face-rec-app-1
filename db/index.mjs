@@ -1,4 +1,4 @@
-const knex = require("knex");
+import knex from "knex";
 
 // for using locally and connecting to pgAdmin as well
 // as for making calls to heroku postgres from server
@@ -12,4 +12,4 @@ const db = knex({
   },
 });
 
-module.exports = db;
+export default db;

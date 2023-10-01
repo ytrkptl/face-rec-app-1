@@ -1,6 +1,6 @@
-const jwt = require("../../utils/jwt-helpers").jwt;
-const redisHelper = require("../../utils/redis-helper");
-const db = require("../../db");
+import { jwt } from "../../utils/jwt-helpers.mjs";
+import { setToken, getMultipleValues } from "../../utils/redis-helper.mjs";
+import { schema, transaction } from "../../db/index.mjs";
 
 //numeric values are interpreted as seconds in jsonwebtoken
 // 900 seconds equals 15 minutes
@@ -29,8 +29,7 @@ const verifyToken = (req, res) => {
 const createSession = (user) => {
   const { email, id } = user;
   const token = signToken(email);
-  return redisHelper
-    .setToken(token, id)
+  return setToken(token, id)
     .then(() => {
       return { success: 200, userId: id, token, user };
     })
@@ -39,12 +38,12 @@ const createSession = (user) => {
 
 const runTransaction = async (name, email, hash) => {
   // create table if not exists
-  await db.schema
+  await schema
     .withSchema("public")
     .hasTable("login")
     .then(function (exists) {
       if (!exists) {
-        return db.schema.createTable("login", function (t) {
+        return schema.createTable("login", function (t) {
           t.increments("id").primary();
           t.string("hash").notNullable();
           t.text("email", 100).unique().notNullable();
@@ -52,8 +51,7 @@ const runTransaction = async (name, email, hash) => {
       }
     });
 
-  return db
-    .transaction((trx) => {
+  return transaction((trx) => {
       trx
         .insert({
           hash: hash,
@@ -89,7 +87,7 @@ const runTransaction = async (name, email, hash) => {
 const handleRegister = async (confirmationId) => {
   try {
     let uniqueKey = confirmationId + " ";
-    const multipleValues = await redisHelper.getMultipleValues(
+    const multipleValues = await getMultipleValues(
       uniqueKey + "randomId",
       uniqueKey + "name",
       uniqueKey + "email",
@@ -126,6 +124,6 @@ const registerAuthentication = async (req, res) => {
   }
 };
 
-module.exports = {
+export default {
   registerAuthentication,
 };

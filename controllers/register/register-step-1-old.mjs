@@ -1,6 +1,6 @@
-const redisHelper = require('../../utils/redis-helper');
-const handleSendingEmailConfirmation = require('../send-email-confirmation').handleSendingEmailConfirmation;
-const randomIdFunc = require('../../utils/other-helper').getUuidv4;
+import { keyExists, setMultipleValuesWithEx } from '../../utils/redis-helper';
+import { handleSendingEmailConfirmation } from '../send-email-confirmation';
+import { getUuidv4 as randomIdFunc } from '../../utils/other-helper';
 
 /* This method checks to see if name, email, and password are provided first, then it
 checks to see if that email exists in database. If yes, sends the user
@@ -25,11 +25,11 @@ const handleRegisterWithEmail = async (db, bcrypt, req, res) => {
         let passwordEnc = bcrypt.hashSync(password, 10);
         let someKeys = ['randomId', 'name', email, 'password', 'email']
         let someVals = [randomId, name, email, passwordEnc, email]
-        redisHelper.keyExists(email)
+        keyExists(email)
           .then(x => {
             if (x === 0) {
               // register only if key does not exist 
-              redisHelper.setMultipleValuesWithEx(someKeys, someVals)
+              setMultipleValuesWithEx(someKeys, someVals)
                 .then(check => {
                   if (check === true) {
                     handleSendingEmailConfirmation(randomId, req, res)
@@ -61,6 +61,6 @@ const handleRegisterWithEmail = async (db, bcrypt, req, res) => {
     })
 }
 
-module.exports = {
+export default {
   handleRegisterWithEmail
 }

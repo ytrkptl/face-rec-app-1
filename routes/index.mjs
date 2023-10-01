@@ -1,19 +1,19 @@
-const express = require("express");
-const router = express.Router();
-const bcrypt = require("bcryptjs");
+import { Router } from "express";
+import bcrypt from "bcryptjs";
+import registerStepOne from "../controllers/register/register-step-1.mjs";
+import registerStepTwo from "../controllers/register/register-step-2.mjs";
+import signin from "../controllers/signin.mjs";
+import forgot from "../controllers/forgot/forgot-step1.mjs";
+import reset from "../controllers/forgot/forgot-step2.mjs";
+import updateNewPassword from "../controllers/forgot/forgot-step3.mjs";
+import profile from "../controllers/profile.mjs";
+import image from "../controllers/image.mjs";
+import auth from "../controllers/authorization.mjs";
+import signout from "../controllers/signout.mjs";
+import subscribe from "../controllers/mailchimp.mjs";
+import db from "../db.mjs";
 
-const registerStepOne = require("../controllers/register/register-step-1");
-const registerStepTwo = require("../controllers/register/register-step-2");
-const signin = require("../controllers/signin");
-const forgot = require("../controllers/forgot/forgot-step1");
-const reset = require("../controllers/forgot/forgot-step2");
-const updateNewPassword = require("../controllers/forgot/forgot-step3");
-const profile = require("../controllers/profile");
-const image = require("../controllers/image");
-const auth = require("../controllers/authorization");
-const signout = require("../controllers/signout");
-const subscribe = require("../controllers/mailchimp");
-const db = require("../db");
+const router = Router();
 
 router.get("/favicon.ico", (req, res) => res.status(204));
 
@@ -71,4 +71,4 @@ router.post("/subscribe", (req, res) => {
   subscribe.handleSubscribe(req, res);
 });
 
-module.exports = router;
+export default router;

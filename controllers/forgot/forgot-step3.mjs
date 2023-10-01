@@ -1,4 +1,4 @@
-const redisHelper = require('../../utils/redis-helper');
+import { deleteToken } from '../../utils/redis-helper.mjs';
 
 /*This corresponds to Step 3 of Forgot Password
 It only happens if Step 1 and 2 are fulfilled,
@@ -26,7 +26,7 @@ const handleUpdateNewPassword = async (req, res, db, bcrypt) => {
       .then(trx.commit)
       .catch(trx.rollback)
   })
-    .then(() => redisHelper.deleteToken(yourEmail))
+    .then(() => deleteToken(yourEmail))
     .then(msg => {
       if (msg === 0) {
         return res.status(400).json('Password reset request time allowed has expired. Please try again.')
@@ -37,6 +37,6 @@ const handleUpdateNewPassword = async (req, res, db, bcrypt) => {
     .catch(err => console.log('from forgot step 3 in handleUpdatePassword line 26'))
 }
 
-module.exports = {
+export default {
   handleUpdateNewPassword
 }

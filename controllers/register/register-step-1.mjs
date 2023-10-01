@@ -1,7 +1,6 @@
-const redisHelper = require("../../utils/redis-helper");
-const handleSendingEmailConfirmation =
-  require("../send-email-confirmation").handleSendingEmailConfirmation;
-const randomIdFunc = require("../../utils/other-helper").getSixDigitCode;
+import { keyExists, setMultipleValuesWithEx, getToken, incrementValue } from "../../utils/redis-helper.mjs";
+import { handleSendingEmailConfirmation } from "../send-email-confirmation";
+import { getSixDigitCode as randomIdFunc } from "../../utils/other-helper.mjs";
 
 let messageToSend = `If the email you provided is valid, you'll receive a 6-digit 
 code from us within the next 5 minutes. Please enter that 6-digit code below.`;
@@ -70,14 +69,12 @@ const checkIfEmailExistsInRedis = (name, email, passwordEnc, req, res) => {
     "requestCount",
   ];
   let someVals = [randomId, name, randomId, passwordEnc, email, 1];
-  redisHelper
-    .keyExists(email)
+  keyExists(email)
     .then((x) => {
       // register only if key does not exist, represented by "x" here.
       if (x === 0) {
         // this block will only run if key does not exist in redis. x should equal 0 if key does not exist
-        redisHelper
-          .setMultipleValuesWithEx(someKeys, someVals)
+        setMultipleValuesWithEx(someKeys, someVals)
           .then((check) => {
             if (check === true) {
               handleSendingEmailConfirmation(randomId, req, res);
@@ -112,11 +109,11 @@ const getRandomIdAndSendEmail = async (req, res) => {
   let val = "";
   let count = "";
 
-  let randomId = await redisHelper.getToken(email);
-  let requestCount = await redisHelper.getToken(`${randomId} requestCount`);
+  let randomId = await getToken(email);
+  let requestCount = await getToken(`${randomId} requestCount`);
 
   if (requestCount < 5) {
-    await redisHelper.incrementValue(`${randomId} requestCount`);
+    await incrementValue(`${randomId} requestCount`);
     val = true;
   } else {
     val = false;
@@ -131,6 +128,6 @@ const getRandomIdAndSendEmail = async (req, res) => {
   }
 };
 
-module.exports = {
+export default {
   handleRegisterWithEmail,
 };

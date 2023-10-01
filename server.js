@@ -1,13 +1,17 @@
-const express = require("express");
-const cors = require("cors");
-const morgan = require("morgan");
-const enforce = require("express-sslify");
-const compression = require("compression");
-const path = require("path");
-const routes = require("./routes");
-const errorHandler = require("./controllers/error/error.js");
+import express from "express";
+import cors from "cors";
+import morgan from "morgan";
+import enforce from "express-sslify";
+import compression from "compression";
+import path from "path";
+import routes from "./routes.mjs";
+import errorHandler from "./controllers/error/error.mjs";
 
-if (process.env.NODE_ENV !== "production") require("dotenv").config();
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+
+if (process.env.NODE_ENV !== "production") import.meta.url = import.meta.url.replace(".js", ".mjs");
 
 const app = express();
 const port = process.env.PORT || 5000;
