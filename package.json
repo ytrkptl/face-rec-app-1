@@ -1,6 +1,9 @@
 {
   "name": "face-rec-app",
   "version": "1.0.0",
+  "description": "Face Recognition App",
+  "type": "module",
+  "main": "server.mjs",
   "engines": {
     "node": "v18.16.0",
     "npm": "8.3.0"
@@ -15,6 +18,7 @@
     "dotenv": "^8.6.0",
     "express": "^4.17.1",
     "express-sslify": "^1.2.0",
+    "got": "^13.0.0",
     "jsonwebtoken": "^9.0.0",
     "knex": "^2.4.0",
     "morgan": "^1.10.0",
@@ -28,10 +32,10 @@
   },
   "scripts": {
     "client": "cd client && npm start",
-    "server": "nodemon server.js",
+    "server": "nodemon server.mjs",
     "build": "cd client && npm run build",
     "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
-    "start": "node server.js",
+    "start": "node server.mjs",
     "heroku-postbuild": "cd client && npm install && npm install --only=dev --no-shrinkwrap && npm run build"
   },
   "keywords": [],
