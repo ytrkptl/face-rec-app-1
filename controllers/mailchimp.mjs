@@ -1,7 +1,8 @@
-const request = require('request');
+import got from 'got';
+
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
-const handleSubscribe = (req, res) => {
+const handleSubscribe = async (req, res) => {
   const { firstName, lastName, email } = req.body;
 
   // Make sure fields are filled
@@ -26,28 +27,29 @@ const handleSubscribe = (req, res) => {
 
   const postData = JSON.stringify(data);
 
+  // Set options for the request
   const options = {
     url: 'https://us19.api.mailchimp.com/3.0/lists/f18811df03',
     method: 'POST',
     headers: {
-      Authorization: `auth ${process.env.MAILCHIMP_API_KEY}`
+      Authorization: `auth ${process.env.MAILCHIMP_API_KEY}`,
+      'Content-Type': 'application/json'
     },
     body: postData
   };
 
-  request(options, (err, response, body) => {
-    if (err) {
-      res.status(400).json('could not send the email');
+  // Make the request
+  try {
+    const response = await got(options);
+    if (response.statusCode === 200) {
+      res.status(200).json('Sent the email');
     } else {
-      if (response.statusCode === 200) {
-        res.status(200).json('Sent the email');
-      } else {
-        res.status(400).json('could not (failed) send the email');
-      }
+      res.status(400).json('could not (failed) send the email');
     }
-  });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json('could not send the email');
+  }
 }
 
-module.exports = {
-  handleSubscribe
-}
+export default { handleSubscribe };
