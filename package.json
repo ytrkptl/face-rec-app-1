@@ -1,12 +1,12 @@
 {
-  "name": "face-rec-app",
+  "name": "face-rec-app-1",
   "version": "1.0.0",
   "description": "Face Recognition App",
   "type": "module",
   "main": "server.mjs",
   "engines": {
-    "node": "v18.16.0",
-    "npm": "8.3.0"
+    "node": "v18.17.1",
+    "npm": "9.8.1"
   },
   "description": "",
   "dependencies": {
