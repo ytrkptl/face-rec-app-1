@@ -1,6 +1,6 @@
 import { jwt } from "../../utils/jwt-helpers.mjs";
 import { setToken, getMultipleValues } from "../../utils/redis-helper.mjs";
-import { schema, transaction } from "../../db/index.mjs";
+import db from "../../db/index.mjs";
 
 //numeric values are interpreted as seconds in jsonwebtoken
 // 900 seconds equals 15 minutes
@@ -38,12 +38,12 @@ const createSession = (user) => {
 
 const runTransaction = async (name, email, hash) => {
   // create table if not exists
-  await schema
+  await db.schema
     .withSchema("public")
     .hasTable("login")
     .then(function (exists) {
       if (!exists) {
-        return schema.createTable("login", function (t) {
+        return db.schema.createTable("login", function (t) {
           t.increments("id").primary();
           t.string("hash").notNullable();
           t.text("email", 100).unique().notNullable();
@@ -51,7 +51,7 @@ const runTransaction = async (name, email, hash) => {
       }
     });
 
-  return transaction((trx) => {
+  return db.transaction((trx) => {
       trx
         .insert({
           hash: hash,

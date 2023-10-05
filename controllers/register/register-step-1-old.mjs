@@ -1,6 +1,6 @@
-import { keyExists, setMultipleValuesWithEx } from '../../utils/redis-helper';
-import { handleSendingEmailConfirmation } from '../send-email-confirmation';
-import { getUuidv4 as randomIdFunc } from '../../utils/other-helper';
+import { keyExists, setMultipleValuesWithEx } from '../../utils/redis-helper.mjs';
+import { handleSendingEmailConfirmation } from '../send-email-confirmation.mjs';
+import { getUuidv4 as randomIdFunc } from '../../utils/other-helper.mjs';
 
 /* This method checks to see if name, email, and password are provided first, then it
 checks to see if that email exists in database. If yes, sends the user

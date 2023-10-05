@@ -24,7 +24,7 @@ const verifyTokenExpiration = (token) => {
   });
 };
 
-export default {
+export {
   jwt,
   signToken,
   verifyTokenExpiration,

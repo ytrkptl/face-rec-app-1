@@ -1,5 +1,5 @@
 import { setTokenWithEx } from "../../utils/redis-helper.mjs";
-import { handleSendingEmail } from "../send-email-forgot";
+import { handleSendingEmail } from "../send-email-forgot.mjs";
 import { getSixDigitCode as randomIdFunc } from "../../utils/other-helper.mjs";
 
 /* This method checks to see if yourEmail was provided first, then it

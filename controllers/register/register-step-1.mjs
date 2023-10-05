@@ -1,5 +1,10 @@
-import { keyExists, setMultipleValuesWithEx, getToken, incrementValue } from "../../utils/redis-helper.mjs";
-import { handleSendingEmailConfirmation } from "../send-email-confirmation";
+import {
+  keyExists,
+  setMultipleValuesWithEx,
+  getToken,
+  incrementValue,
+} from "../../utils/redis-helper.mjs";
+import { handleSendingEmailConfirmation } from "../send-email-confirmation.mjs";
 import { getSixDigitCode as randomIdFunc } from "../../utils/other-helper.mjs";
 
 let messageToSend = `If the email you provided is valid, you'll receive a 6-digit 

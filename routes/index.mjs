@@ -11,7 +11,7 @@ import image from "../controllers/image.mjs";
 import auth from "../controllers/authorization.mjs";
 import signout from "../controllers/signout.mjs";
 import subscribe from "../controllers/mailchimp.mjs";
-import db from "../db.mjs";
+import db from "../db/index.mjs";
 
 const router = Router();
 

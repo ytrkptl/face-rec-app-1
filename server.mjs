@@ -1,14 +1,15 @@
+import dotenv from 'dotenv'
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import enforce from "express-sslify";
 import compression from "compression";
 import path from "path";
-import routes from "./routes.mjs";
+import routes from "./routes/index.mjs";
 import errorHandler from "./controllers/error/error.mjs";
 
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
+if(process.env.NODE_ENV !== "production") {
+  dotenv.config()
 }
 
 if (process.env.NODE_ENV !== "production") import.meta.url = import.meta.url.replace(".js", ".mjs");
