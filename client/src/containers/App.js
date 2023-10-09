@@ -3,16 +3,15 @@ import { Route, redirect, Routes, Outlet } from "react-router-dom";
 import { RemoveScroll } from "react-remove-scroll";
 import ParticlesComponent from "../components/Particles/Particles";
 import Navigation from "../components/Navigation/Navigation";
-import FaceRecognition from "../components/FaceRecognition/FaceRecognition";
+import RankAndImageFormWrapper from "../components/RankAndImageFormWrapper/RankAndImageFormWrapper";
 import Signin from "../components/Signin/Signin";
 import Register from "../components/Register/Register";
 import Forgot from "../components/Forgot/Forgot";
-import UploadButtonWithPicker from "../components/UploadButtonWithPicker/UploadButtonWithPicker";
-import Rank from "../components/Rank/Rank";
 import Modal from "../components/Modal/Modal";
 import Profile from "../components/Profile/Profile";
 import Footer from "../components/Footer/Footer";
 import Lightning from "../components/Lightning/Lightning";
+import RouteWithRedirect from "../components/RouteWithRedirect";
 import * as filestack from "filestack-js";
 import "./App.css";
 
@@ -334,45 +333,53 @@ const App = () => {
         <Route
           index
           element={
-            <>
-              {isSignedIn ? (
-                <div className="rankAndImageFormWrapper">
-                  <Rank name={user.name} entries={user.entries} />
-                  <UploadButtonWithPicker
-                    changeImageUrl={changeImageUrl}
-                    client={client}
-                  />
-                  <FaceRecognition boxes={boxes} imageUrl={imageUrl} />
-                </div>
-              ) : (
-                <h1>you are not signed in</h1>
-              )}
-            </>
+            <RouteWithRedirect isSignedIn={isSignedIn} redirectPath="/signin">
+              <RankAndImageFormWrapper
+                name={user.name}
+                entries={user.entries}
+                changeImageUrl={changeImageUrl}
+                client={client}
+                boxes={boxes}
+                imageUrl={imageUrl}
+              />
+            </RouteWithRedirect>
           }
         />
         <Route
           exact
           path="signin"
           element={
-            <Signin
-              loadUser={loadUser}
-              saveAuthTokenInSession={saveAuthTokenInSession}
-              toggleSignIn={toggleSignIn}
-            />
+            <RouteWithRedirect isSignedIn={!isSignedIn} redirectPath="/">
+              <Signin
+                loadUser={loadUser}
+                saveAuthTokenInSession={saveAuthTokenInSession}
+                toggleSignIn={toggleSignIn}
+              />
+            </RouteWithRedirect>
           }
         />
         <Route
           exact
           path="register"
           element={
-            <Register
-              loadUser={loadUser}
-              saveAuthTokenInSession={saveAuthTokenInSession}
-              toggleSignIn={toggleSignIn}
-            />
+            <RouteWithRedirect isSignedIn={!isSignedIn} redirectPath="/">
+              <Register
+                loadUser={loadUser}
+                saveAuthTokenInSession={saveAuthTokenInSession}
+                toggleSignIn={toggleSignIn}
+              />
+            </RouteWithRedirect>
           }
         />
-        <Route exact path="forgot" element={<Forgot />} />
+        <Route
+          exact
+          path="forgot"
+          element={
+            <RouteWithRedirect isSignedIn={!isSignedIn} redirectPath="/">
+              <Forgot />
+            </RouteWithRedirect>
+          }
+        />
       </Route>
     </Routes>
   );
