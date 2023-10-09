@@ -1,291 +1,309 @@
-import React, { createRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Spinner from "../Spinner/Spinner";
 import "./Forgot.css";
-import { withRouter } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-class Forgot extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      forgotEmail: "",
-      resetId: "",
-      newPassword: "",
-      confirmNewPassword: "",
-      errorMessage: ``,
-      forgotEmailErrorMessage: "",
-      resetIdErrorMessage: "",
-      newPasswordErrorMessage: ``,
-      confirmPasswordErrorMessage: ``,
-      step2StatusMessage: ``,
-      step3StatusMessage: ``,
-      showError: false,
-      showForgotEmailError: false,
-      showResetIdError: false,
-      showNewPasswordError: false,
-      showConfirmPasswordError: false,
-      showSpinner: null,
-      proceed: false,
-      passwordsMatch: false,
-      showStep2Status: false,
-      showStep3Status: false,
-      stepNumber: 1,
-    };
-    this.forgotEmailRef = createRef();
-    this.resetIdRef = createRef();
-    this.newPasswordRef = createRef();
-    this.confirmNewPasswordRef = createRef();
-  }
+const Forgot = () => {
+  const [forgotState, setForgotState] = useState({
+    forgotEmail: "",
+    resetId: "",
+    newPassword: "",
+    confirmNewPassword: "",
+    errorMessage: ``,
+    forgotEmailErrorMessage: "",
+    resetIdErrorMessage: "",
+    newPasswordErrorMessage: ``,
+    confirmPasswordErrorMessage: ``,
+    step2StatusMessage: ``,
+    step3StatusMessage: ``,
+    showError: false,
+    showForgotEmailError: false,
+    showResetIdError: false,
+    showNewPasswordError: false,
+    showConfirmPasswordError: false,
+    showSpinner: null,
+    proceed: false,
+    showStep2Status: false,
+    showStep3Status: false,
+    stepNumber: 1,
+  });
+  const {
+    forgotEmail,
+    resetId,
+    newPassword,
+    confirmNewPassword,
+    errorMessage,
+    forgotEmailErrorMessage,
+    resetIdErrorMessage,
+    newPasswordErrorMessage,
+    confirmPasswordErrorMessage,
+    step2StatusMessage,
+    step3StatusMessage,
+    showError,
+    showForgotEmailError,
+    showResetIdError,
+    showNewPasswordError,
+    showConfirmPasswordError,
+    showSpinner,
+    proceed,
+    showStep2Status,
+    showStep3Status,
+    stepNumber,
+  } = forgotState;
 
-  componentDidMount() {
-    this.forgotEmailRef.current.focus();
-  }
+  const forgotEmailRef = useRef(null);
+  const resetIdRef = useRef(null);
+  const newPasswordRef = useRef(null);
+  const confirmNewPasswordRef = useRef(null);
 
-  componentDidUpdate() {
-    if (this.state.stepNumber === 1 && this.forgotEmailRef.current) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    forgotEmailRef.current.focus();
+  }, []);
+
+  useEffect(() => {
+    if (stepNumber === 1 && forgotEmailRef.current) {
       if (
-        this.forgotEmailRef.current.validity.valid === true &&
-        this.state.showForgotEmailError === true
+        forgotEmailRef.current.validity.valid === true &&
+        showForgotEmailError === true
       ) {
-        this.setState({ showForgotEmailError: false });
+        setForgotState({ ...forgotState, showForgotEmailError: false });
       } else if (
-        this.forgotEmailRef.current.validity.valid === false &&
-        this.state.showForgotEmailError === false
+        forgotEmailRef.current.validity.valid === false &&
+        showForgotEmailError === false
       ) {
-        this.setState({ showForgotEmailError: true });
+        setForgotState({ ...forgotState, showForgotEmailError: true });
       }
-    } else if (this.state.stepNumber === 2 && this.resetIdRef.current) {
-      if (
-        this.resetIdRef.current.validity.valid &&
-        this.state.showResetIdError
-      ) {
-        this.setState({ showResetIdError: false });
+    } else if (stepNumber === 2 && resetIdRef.current) {
+      if (resetIdRef.current.validity.valid && showResetIdError) {
+        setForgotState({ ...forgotState, showResetIdError: false });
       } else if (
-        this.state.resetId !== "" &&
-        !this.resetIdRef.current.validity.valid &&
-        !this.state.showResetIdError
+        resetId !== "" &&
+        !resetIdRef.current.validity.valid &&
+        !showResetIdError
       ) {
-        this.setState({ showResetIdError: true });
+        setForgotState({ ...forgotState, showResetIdError: true });
       }
     } else if (
-      this.state.stepNumber === 3 &&
-      this.newPasswordRef.current &&
-      this.confirmNewPasswordRef.current
+      stepNumber === 3 &&
+      newPasswordRef.current &&
+      confirmNewPasswordRef.current
     ) {
-      if (
-        this.newPasswordRef.current.validity.valid &&
-        this.state.showNewPasswordError
-      ) {
-        this.setState({ showNewPasswordError: false });
+      if (newPasswordRef.current.validity.valid && showNewPasswordError) {
+        setForgotState({ ...forgotState, showNewPasswordError: false });
       } else if (
-        !this.newPasswordRef.current.validity.valid &&
-        !this.state.showNewPasswordError
+        !newPasswordRef.current.validity.valid &&
+        !showNewPasswordError
       ) {
-        this.setState({ showNewPasswordError: true });
+        setForgotState({ ...forgotState, showNewPasswordError: true });
       }
       if (
-        this.confirmNewPasswordRef.current.validity.valid &&
-        this.state.showConfirmPasswordError
+        confirmNewPasswordRef.current.validity.valid &&
+        showConfirmPasswordError
       ) {
-        this.setState({ showConfirmPasswordError: false });
+        setForgotState({ ...forgotState, showConfirmPasswordError: false });
       } else if (
-        !this.confirmNewPasswordRef.current.validity.valid &&
-        !this.state.showConfirmPasswordError
+        !confirmNewPasswordRef.current.validity.valid &&
+        !showConfirmPasswordError
       ) {
-        this.setState({ showConfirmPasswordError: true });
+        setForgotState({ ...forgotState, showConfirmPasswordError: true });
       }
       if (
-        this.newPasswordRef.current.validity.valid &&
-        this.confirmNewPasswordRef.current.validity.valid
+        newPasswordRef.current.validity.valid &&
+        confirmNewPasswordRef.current.validity.valid
       ) {
-        if (!this.state.showError) {
+        if (!showError) {
           if (
-            this.newPasswordRef.current.value !==
-            this.confirmNewPasswordRef.current.value
+            newPasswordRef.current.value !== confirmNewPasswordRef.current.value
           ) {
-            this.onShowError(true);
+            onShowError(true);
           }
         } else {
           if (
-            this.newPasswordRef.current.value ===
-            this.confirmNewPasswordRef.current.value
+            newPasswordRef.current.value === confirmNewPasswordRef.current.value
           ) {
-            this.onShowError(false);
+            onShowError(false);
           }
         }
       }
     }
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    forgotEmail,
+    resetId,
+    newPassword,
+    confirmNewPassword,
+    stepNumber,
+    showForgotEmailError,
+    forgotState,
+    showResetIdError,
+    showNewPasswordError,
+    showConfirmPasswordError,
+    showError,
+  ]);
 
-  onEmailChange = (event) => {
-    this.setState({ forgotEmail: event.target.value });
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setForgotState({ ...forgotState, [name]: value });
   };
 
-  onForgotEmailError = (show) => {
+  const onForgotEmailError = (show) => {
     if (show) {
-      this.setState({
+      setForgotState({
+        ...forgotState,
         showForgotEmailError: true,
         forgotEmailErrorMessage: `Email is a required field and must include a proper email address. Example: abc@gmail.com`,
       });
-      this.forgotEmailRef.current.classList.add("highlightClassInForgot");
-      this.forgotEmailRef.current.focus();
+      forgotEmailRef.current.classList.add("highlightClassInForgot");
+      forgotEmailRef.current.focus();
       return;
     }
-    this.setState({ showForgotEmailError: false });
-    this.forgotEmailRef.current.classList.remove("highlightClassInForgot");
+    setForgotState({
+      ...forgotState,
+      showForgotEmailError: false,
+    });
+    forgotEmailRef.current.classList.remove("highlightClassInForgot");
     return;
   };
 
-  onEnterKeyPressOnEmail = (event) => {
-    if (event.key === "Enter" && this.state.forgotEmail === "") {
-      this.onForgotEmailError(true);
+  const onEnterKeyPressOnEmail = (event) => {
+    if (event.key === "Enter" && forgotEmail === "") {
+      onForgotEmailError(true);
     } else if (
       event.key === "Enter" &&
-      this.forgotEmailRef.current.validity.typeMismatch
+      forgotEmailRef.current.validity.typeMismatch
     ) {
-      this.onForgotEmailError(true);
+      onForgotEmailError(true);
     } else if (
       event.key === "Enter" &&
-      !this.forgotEmailRef.current.validity.typeMismatch
+      !forgotEmailRef.current.validity.typeMismatch
     ) {
-      this.onForgotEmailError(false);
-      this.onSubmitForgotStep1();
+      onForgotEmailError(false);
+      onSubmitForgotStep1();
     }
   };
 
-  onResetIdChange = (event) => {
-    this.setState({ resetId: event.target.value });
-  };
-
-  onResetIdError = (show) => {
+  const onResetIdError = (show) => {
     if (show) {
-      this.setState({
+      setForgotState({
+        ...forgotState,
         showResetIdError: true,
         resetIdErrorMessage: "Reset Id is a required field",
       });
-      this.resetIdRef.current.classList.add("highlightClassInForgot");
-      this.resetIdRef.current.focus();
+      resetIdRef.current.classList.add("highlightClassInForgot");
+      resetIdRef.current.focus();
       return;
     }
-    this.setState({ showResetIdError: false });
-    this.resetIdRef.current.classList.remove("highlightClassInForgot");
+    setForgotState({ ...forgotState, showResetIdError: false });
+    resetIdRef.current.classList.remove("highlightClassInForgot");
     return;
   };
 
-  onEnterKeyPressOnResetId = (event) => {
-    if (event.key === "Enter" && this.state.resetId === "") {
-      this.onResetIdError(true);
-    } else if (event.key === "Enter" && this.state.resetId !== "") {
-      this.onResetIdError(false);
-      this.onSubmitResetId();
+  const onEnterKeyPressOnResetId = (event) => {
+    if (event.key === "Enter" && resetId === "") {
+      onResetIdError(true);
+    } else if (event.key === "Enter" && resetId !== "") {
+      onResetIdError(false);
+      onSubmitResetId();
     }
   };
 
-  onNewPasswordChange = (event) => {
-    this.setState({ newPassword: event.target.value });
-  };
-
-  onPasswordError = (show) => {
+  const onPasswordError = (show) => {
     if (show) {
-      this.setState({
+      setForgotState({
+        ...forgotState,
         showNewPasswordError: true,
         newPasswordErrorMessage:
           "Password is a required field and must be between 8 - 10 characters.",
       });
-      this.newPasswordRef.current.classList.add("highlightClassInForgot");
-      this.newPasswordRef.current.focus();
+      newPasswordRef.current.classList.add("highlightClassInForgot");
+      newPasswordRef.current.focus();
       return;
     }
-    this.setState({ showNewPasswordError: false });
-    this.newPasswordRef.current.classList.remove("highlightClassInForgot");
+    setForgotState({ ...forgotState, showNewPasswordError: false });
+    newPasswordRef.current.classList.remove("highlightClassInForgot");
     return;
   };
 
-  onEnterKeyPressOnPassword = (event) => {
-    if (event.key === "Enter" && this.state.newPassword.length < 8) {
-      this.onPasswordError(true);
+  const onEnterKeyPressOnPassword = (event) => {
+    if (event.key === "Enter" && newPassword.length < 8) {
+      onPasswordError(true);
     } else if (
       event.key === "Enter" &&
-      !this.newPasswordRef.current.validity.valid
+      !newPasswordRef.current.validity.valid
     ) {
-      this.onPasswordError(true);
-    } else if (event.key === "Enter" && this.state.newPassword.length >= 8) {
-      this.onPasswordError(false);
-      if (this.state.confirmNewPassword === "") {
-        this.confirmNewPasswordRef.current.focus();
+      onPasswordError(true);
+    } else if (event.key === "Enter" && newPassword.length >= 8) {
+      onPasswordError(false);
+      if (confirmNewPassword === "") {
+        confirmNewPasswordRef.current.focus();
       } else {
-        this.onPasswordReset();
+        onPasswordReset();
       }
     }
   };
 
-  onConfirmNewPasswordChange = (event) => {
-    this.setState({ confirmNewPassword: event.target.value });
-  };
-
-  onConfirmPasswordError = (show) => {
+  const onConfirmPasswordError = (show) => {
     if (show) {
-      this.setState({
+      setForgotState({
+        ...forgotState,
         showConfirmPasswordError: true,
         confirmPasswordErrorMessage: `Confirm New Password is a required field and must be between 8 - 10 characters`,
       });
-      this.confirmNewPasswordRef.current.classList.add(
-        "highlightClassInForgot"
-      );
-      this.confirmNewPasswordRef.current.focus();
+      confirmNewPasswordRef.current.classList.add("highlightClassInForgot");
+      confirmNewPasswordRef.current.focus();
       return;
     }
-    this.setState({ showConfirmPasswordError: false });
-    this.confirmNewPasswordRef.current.classList.remove(
-      "highlightClassInForgot"
-    );
+    setForgotState({ ...forgotState, showConfirmPasswordError: false });
+    confirmNewPasswordRef.current.classList.remove("highlightClassInForgot");
     return;
   };
 
-  onEnterKeyPressOnConfirmPassword = (event) => {
+  const onEnterKeyPressOnConfirmPassword = (event) => {
     if (
       event.key === "Enter" &&
-      this.confirmNewPasswordRef.current.value.length < 8
+      confirmNewPasswordRef.current.value.length < 8
     ) {
-      this.onConfirmPasswordError(true);
+      onConfirmPasswordError(true);
       return;
     } else if (
       event.key === "Enter" &&
-      !this.confirmNewPasswordRef.current.validity.valid
+      !confirmNewPasswordRef.current.validity.valid
     ) {
-      this.onConfirmPasswordError(true);
+      onConfirmPasswordError(true);
       return;
     } else if (
       event.key === "Enter" &&
-      this.confirmNewPasswordRef.current.value.length >= 8
+      confirmNewPasswordRef.current.value.length >= 8
     ) {
-      this.onConfirmPasswordError(false);
-      if (this.state.newPassword === "") {
-        this.newPasswordRef.current.focus();
+      onConfirmPasswordError(false);
+      if (newPassword === "") {
+        newPasswordRef.current.focus();
       } else {
-        this.onPasswordReset();
+        onPasswordReset();
       }
     }
   };
 
-  onSubmitForgotStep1 = () => {
-    if (
-      this.state.forgotEmail === "" ||
-      this.forgotEmailRef.current.validity.typeMismatch
-    ) {
-      this.onForgotEmailError(true);
+  const onSubmitForgotStep1 = () => {
+    if (forgotEmail === "" || forgotEmailRef.current.validity.typeMismatch) {
+      onForgotEmailError(true);
     } else {
-      this.onForgotEmailError(false);
-      this.setState({ showSpinner: true });
+      onForgotEmailError(false);
+      setForgotState({ ...forgotState, showSpinner: true });
       fetch(`/forgot`, {
         method: "post",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          yourEmail: this.state.forgotEmail,
+          yourEmail: forgotEmail,
         }),
       })
         .then((response) => response.json())
         .then((data) => {
-          this.setState({
+          setForgotState({
+            ...forgotState,
             showSpinner: false,
             stepNumber: 2,
             showStep2Status: true,
@@ -294,7 +312,8 @@ class Forgot extends React.Component {
         })
         .catch((err) => {
           if (err) {
-            this.setState({
+            setForgotState({
+              ...forgotState,
               forgotEmailErrorMessage: true,
               showSpinner: false,
             });
@@ -303,30 +322,36 @@ class Forgot extends React.Component {
     }
   };
 
-  onSubmitResetId = () => {
-    if (this.state.resetId === "" || !this.resetIdRef.current.validity.valid) {
-      this.onResetIdError(true);
+  const onSubmitResetId = () => {
+    if (resetId === "" || !resetIdRef?.current?.validity.valid) {
+      onResetIdError(true);
     } else {
-      this.setState({ showStep2Status: false, showSpinner: true });
+      setForgotState({
+        ...forgotState,
+        showStep2Status: false,
+        showSpinner: true,
+      });
       fetch(`/reset`, {
         method: "post",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          resetId: this.state.resetId,
-          yourEmail: this.state.forgotEmail,
+          resetId: resetId,
+          yourEmail: forgotEmail,
         }),
       })
         .then((response) => response.json())
         .then((data) => {
           if (data === "Reset Id matches") {
-            this.setState({
+            setForgotState({
+              ...forgotState,
               showSpinner: false,
               stepNumber: 3,
               proceed: true,
               showResetIdError: false,
             });
           } else if (data === "Reset Id did not match") {
-            this.setState({
+            setForgotState({
+              ...forgotState,
               showSpinner: false,
               stepNumber: 2,
               proceed: false,
@@ -335,8 +360,9 @@ class Forgot extends React.Component {
             });
           }
         })
-        .catch((err) =>
-          this.setState({
+        .catch(() =>
+          setForgotState({
+            ...forgotState,
             showSpinner: false,
             stepNumber: 2,
             proceed: false,
@@ -346,65 +372,66 @@ class Forgot extends React.Component {
     }
   };
 
-  onShowError = (show) => {
+  const onShowError = (show) => {
     if (show) {
-      this.setState({ showError: true, errorMessage: `Passwords must match` });
-      this.newPasswordRef.current.classList.add("passwordsDontMatchClass");
-      this.confirmNewPasswordRef.current.classList.add(
-        "passwordsDontMatchClass"
-      );
-      this.confirmNewPasswordRef.current.focus();
+      setForgotState({
+        ...forgotState,
+        showError: true,
+        errorMessage: `Passwords must match`,
+      });
+      newPasswordRef.current.classList.add("passwordsDontMatchClass");
+      confirmNewPasswordRef.current.classList.add("passwordsDontMatchClass");
+      confirmNewPasswordRef.current.focus();
       return;
     }
-    this.setState({ showError: false });
-    this.newPasswordRef.current.classList.remove("passwordsDontMatchClass");
-    this.confirmNewPasswordRef.current.classList.remove(
-      "passwordsDontMatchClass"
-    );
+    setForgotState({ ...forgotState, showError: false });
+    newPasswordRef.current.classList.remove("passwordsDontMatchClass");
+    confirmNewPasswordRef.current.classList.remove("passwordsDontMatchClass");
     return;
   };
 
-  onPasswordReset = () => {
-    if (this.state.newPassword === "" && this.state.confirmNewPassword === "") {
-      this.onPasswordError(true);
-      this.onConfirmPasswordError(true);
+  const onPasswordReset = () => {
+    if (newPassword === "" && confirmNewPassword === "") {
+      onPasswordError(true);
+      onConfirmPasswordError(true);
       return;
-    } else if (!this.newPasswordRef.current.validity.valid) {
-      this.onPasswordError(true);
+    } else if (!newPasswordRef.current.validity.valid) {
+      onPasswordError(true);
       return;
-    } else if (!this.confirmNewPasswordRef.current.validity.valid) {
-      this.onConfirmPasswordError(true);
+    } else if (!confirmNewPasswordRef.current.validity.valid) {
+      onConfirmPasswordError(true);
       return;
     } else if (
-      this.newPasswordRef.current.value !==
-      this.confirmNewPasswordRef.current.value
+      newPasswordRef?.current?.value !== confirmNewPasswordRef.current.value
     ) {
-      this.onShowError(true);
+      onShowError(true);
       return;
     } else {
-      this.onPasswordError(false);
-      this.onConfirmPasswordError(false);
-      this.setState({ showSpinner: true });
+      onPasswordError(false);
+      onConfirmPasswordError(false);
+      setForgotState({ ...forgotState, showSpinner: true });
       fetch(`/update-new-password`, {
         method: "post",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          yourEmail: this.state.forgotEmail,
-          newPassword: this.state.newPassword,
-          confirmNewPassword: this.state.confirmNewPassword,
+          yourEmail: forgotEmail,
+          newPassword: newPassword,
+          confirmNewPassword: confirmNewPassword,
         }),
       })
         .then((response) => response.json())
         .then((data) => {
-          this.setState({ showSpinner: false });
+          setForgotState({ ...forgotState, showSpinner: false });
           if (data === "Password reset complete.") {
-            this.setState({
+            setForgotState({
+              ...forgotState,
               showStep3Status: true,
               step3StatusMessage: `Password was successfully updated. Now taking you back to the sign in page.`,
             });
-            setTimeout(() => this.props.history.push("signin"), 3000);
+            setTimeout(() => navigate("signin"), 3000);
           } else {
-            this.setState({
+            setForgotState({
+              ...forgotState,
               showSpinner: false,
               stepNumber: 3,
               showStep3Status: true,
@@ -412,8 +439,9 @@ class Forgot extends React.Component {
             });
           }
         })
-        .catch((err) => {
-          this.setState({
+        .catch(() => {
+          setForgotState({
+            ...forgotState,
             showSpinner: false,
             stepNumber: 3,
             showStep3Status: true,
@@ -423,188 +451,175 @@ class Forgot extends React.Component {
     }
   };
 
-  render() {
-    return (
-      <article className="forgotArticle">
-        <main className="forgotMain">
-          <div className="forgotMeasure">
-            <fieldset id="forgot" className="forgotFieldset">
-              <legend className="forgotLegend">Reset Password</legend>
-              <h4 className="steps">{`Step ${this.state.stepNumber} of 3`}</h4>
-              {this.state.showStep2Status && (
-                <p className="forgotErrorDisplay">
-                  {this.state.step2StatusMessage}
-                </p>
-              )}
-              {this.state.showSpinner === null &&
-              this.state.proceed === false ? (
+  return (
+    <article className="forgotArticle">
+      <main className="forgotMain">
+        <div className="forgotMeasure">
+          <fieldset id="forgot" className="forgotFieldset">
+            <legend className="forgotLegend">Reset Password</legend>
+            <h4 className="steps">{`Step ${stepNumber} of 3`}</h4>
+            {showStep2Status && (
+              <p className="forgotErrorDisplay">{step2StatusMessage}</p>
+            )}
+            {showSpinner === null && proceed === false ? (
+              <div className="belowLegendDivInForgot">
+                <label
+                  className="belowLegendLabelInForgot"
+                  htmlFor="forgotEmail"
+                >
+                  Email
+                </label>
+                <input
+                  className="belowLegendInputInForgot"
+                  type="email"
+                  name="forgotEmail"
+                  id="forgotEmail"
+                  required
+                  ref={forgotEmailRef}
+                  onChange={handleChange}
+                  onKeyDown={onEnterKeyPressOnEmail}
+                />
+                {showForgotEmailError && forgotEmailErrorMessage !== "" && (
+                  <p className="forgotErrorDisplay">
+                    {forgotEmailErrorMessage}
+                  </p>
+                )}
+                <input
+                  onClick={onSubmitForgotStep1}
+                  className="forgotButtonInForgot"
+                  type="button"
+                  value="Send Email"
+                />
+              </div>
+            ) : (
+              showSpinner === false &&
+              proceed === false && (
                 <div className="belowLegendDivInForgot">
-                  <label
-                    className="belowLegendLabelInForgot"
-                    htmlFor="forgot-email-address"
-                  >
-                    Email
+                  <label className="belowLegendLabelInForgot" htmlFor="resetId">
+                    Reset ID
                   </label>
                   <input
                     className="belowLegendInputInForgot"
-                    type="email"
-                    name="email-address"
-                    id="forgot-email-address"
+                    type="text"
+                    name="resetId"
+                    id="resetId"
                     required
-                    ref={this.forgotEmailRef}
-                    onChange={this.onEmailChange}
-                    onKeyDown={this.onEnterKeyPressOnEmail}
+                    ref={resetIdRef}
+                    onChange={handleChange}
+                    onKeyDown={onEnterKeyPressOnResetId}
                   />
-                  {this.state.showForgotEmailError &&
-                    this.state.forgotEmailErrorMessage !== "" && (
-                      <p className="forgotErrorDisplay">
-                        {this.state.forgotEmailErrorMessage}
-                      </p>
-                    )}
+                  {showResetIdError && resetIdErrorMessage !== "" && (
+                    <p className="forgotErrorDisplay">{resetIdErrorMessage}</p>
+                  )}
                   <input
-                    onClick={this.onSubmitForgotStep1}
+                    onClick={onSubmitResetId}
                     className="forgotButtonInForgot"
                     type="button"
-                    value="Send Email"
+                    value="Submit Code"
                   />
                 </div>
-              ) : (
-                this.state.showSpinner === false &&
-                this.state.proceed === false && (
-                  <div className="belowLegendDivInForgot">
-                    <label
-                      className="belowLegendLabelInForgot"
-                      htmlFor="reset-id"
-                    >
-                      Reset ID
-                    </label>
-                    <input
-                      className="belowLegendInputInForgot"
-                      type="text"
-                      name="reset-id"
-                      id="reset-id"
-                      required
-                      ref={this.resetIdRef}
-                      onChange={this.onResetIdChange}
-                      onKeyDown={this.onEnterKeyPressOnResetId}
-                    />
-                    {this.state.showResetIdError &&
-                      this.state.resetIdErrorMessage !== "" && (
-                        <p className="forgotErrorDisplay">
-                          {this.state.resetIdErrorMessage}
-                        </p>
-                      )}
-                    <input
-                      onClick={this.onSubmitResetId}
-                      className="forgotButtonInForgot"
-                      type="button"
-                      value="Submit Code"
-                    />
-                  </div>
-                )
-              )}
-              {this.state.proceed && (
-                <div className="belowLegendDivInForgot">
-                  <label
-                    className="belowLegendLabelInForgot"
-                    htmlFor="new-password"
-                  >
-                    New Password
-                  </label>
-                  <input
-                    className="belowLegendInputInForgot"
-                    type="password"
-                    name="new-password"
-                    id="new-password"
-                    required
-                    minLength={8}
-                    maxLength={10}
-                    ref={this.newPasswordRef}
-                    onChange={this.onNewPasswordChange}
-                    onKeyDown={this.onEnterKeyPressOnPassword}
-                  />
-                  {this.state.showNewPasswordError &&
-                    this.state.newPasswordErrorMessage !== "" && (
-                      <p className="forgotErrorDisplay">
-                        {this.state.newPasswordErrorMessage}
-                      </p>
-                    )}
-                  {this.state.showError && (
-                    <p className="forgotErrorDisplay forgotFieldsError">
-                      {this.state.errorMessage}
+              )
+            )}
+            {proceed && (
+              <div className="belowLegendDivInForgot">
+                <label
+                  className="belowLegendLabelInForgot"
+                  htmlFor="newPassword"
+                >
+                  New Password
+                </label>
+                <input
+                  className="belowLegendInputInForgot"
+                  type="password"
+                  name="newPassword"
+                  id="newPassword"
+                  required
+                  minLength={8}
+                  maxLength={10}
+                  ref={newPasswordRef}
+                  onChange={handleChange}
+                  onKeyDown={onEnterKeyPressOnPassword}
+                />
+                {showNewPasswordError && newPasswordErrorMessage !== "" && (
+                  <p className="forgotErrorDisplay">
+                    {newPasswordErrorMessage}
+                  </p>
+                )}
+                {showError && (
+                  <p className="forgotErrorDisplay forgotFieldsError">
+                    {errorMessage}
+                  </p>
+                )}
+              </div>
+            )}
+            {proceed && (
+              <div className="belowLegendDivInForgot">
+                <label
+                  className="belowLegendLabelInForgot"
+                  htmlFor="confirmNewPassword"
+                >
+                  Confirm New Password
+                </label>
+                <input
+                  className="belowLegendInputInForgot"
+                  type="password"
+                  name="confirmNewPassword"
+                  id="confirmNewPassword"
+                  required
+                  minLength={8}
+                  maxLength={10}
+                  ref={confirmNewPasswordRef}
+                  onChange={handleChange}
+                  onKeyDown={onEnterKeyPressOnConfirmPassword}
+                />
+                {showConfirmPasswordError &&
+                  confirmPasswordErrorMessage !== "" && (
+                    <p className="forgotErrorDisplay">
+                      {confirmPasswordErrorMessage}
                     </p>
                   )}
-                </div>
-              )}
-              {this.state.proceed && (
-                <div className="belowLegendDivInForgot">
-                  <label
-                    className="belowLegendLabelInForgot"
-                    htmlFor="confirm-new-password"
-                  >
-                    Confirm New Password
-                  </label>
-                  <input
-                    className="belowLegendInputInForgot"
-                    type="password"
-                    name="confirm-new-password"
-                    id="confirm-new-password"
-                    required
-                    minLength={8}
-                    maxLength={10}
-                    ref={this.confirmNewPasswordRef}
-                    onChange={this.onConfirmNewPasswordChange}
-                    onKeyDown={this.onEnterKeyPressOnConfirmPassword}
-                  />
-                  {this.state.showConfirmPasswordError &&
-                    this.state.confirmPasswordErrorMessage !== "" && (
-                      <p className="forgotErrorDisplay">
-                        {this.state.confirmPasswordErrorMessage}
-                      </p>
-                    )}
-                  {this.state.showError && (
-                    <p className="forgotErrorDisplay forgotFieldsError">
-                      {this.state.errorMessage}
-                    </p>
-                  )}
-                  {this.state.showStep3Status && (
-                    <p className="forgotErrorDisplay forgotFieldsError">
-                      {this.state.step3StatusMessage}
-                    </p>
-                  )}
-                </div>
-              )}
-              {this.state.proceed && (
-                <div>
-                  <input
-                    onClick={this.onPasswordReset}
-                    className="forgotButtonInForgot"
-                    type="button"
-                    value="Reset Password"
-                  />
-                </div>
-              )}
-            </fieldset>
-            <Spinner showSpinner={this.state.showSpinner} />
-            <div className="belowForgotButtonDiv">
-              <p
-                onClick={() => this.props.history.push("signin")}
-                className="registerLinkInForgot"
-              >
-                Go Back to Sign In
-              </p>
-              <p
-                onClick={() => this.props.history.push("register")}
-                className="registerLinkInForgot"
-              >
-                Register
-              </p>
-            </div>
+                {showError && (
+                  <p className="forgotErrorDisplay forgotFieldsError">
+                    {errorMessage}
+                  </p>
+                )}
+                {showStep3Status && (
+                  <p className="forgotErrorDisplay forgotFieldsError">
+                    {step3StatusMessage}
+                  </p>
+                )}
+              </div>
+            )}
+            {proceed && (
+              <div>
+                <input
+                  onClick={onPasswordReset}
+                  className="forgotButtonInForgot"
+                  type="button"
+                  value="Reset Password"
+                />
+              </div>
+            )}
+          </fieldset>
+          <Spinner showSpinner={showSpinner} />
+          <div className="belowForgotButtonDiv">
+            <p
+              onClick={() => navigate("/signin")}
+              className="registerLinkInForgot"
+            >
+              Go Back to Sign In
+            </p>
+            <p
+              onClick={() => navigate("/register")}
+              className="registerLinkInForgot"
+            >
+              Register
+            </p>
           </div>
-        </main>
-      </article>
-    );
-  }
-}
+        </div>
+      </main>
+    </article>
+  );
+};
 
-export default withRouter(Forgot);
+export default Forgot;

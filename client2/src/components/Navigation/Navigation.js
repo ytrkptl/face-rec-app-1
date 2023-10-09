@@ -1,7 +1,8 @@
+import React from "react";
 import ProfileIcon from "../Profile/ProfileIcon";
 import Logo from "../Logo/Logo";
-import { useNavigate } from "react-router-dom";
 import "./Navigation.css";
+import { useHistory } from "react-router-dom";
 
 const Navigation = ({
   isSignedIn,
@@ -10,7 +11,7 @@ const Navigation = ({
   showLightning,
   signOut,
 }) => {
-  const navigateTo = useNavigate();
+  const history = useHistory();
 
   if (isSignedIn) {
     return (
@@ -30,11 +31,11 @@ const Navigation = ({
       <nav className="nav">
         <Logo showLightning={showLightning} />
         <div className="divInNav">
-          <button onClick={() => navigateTo("signin")} className="customLink">
+          <button onClick={() => history.push("signin")} className="customLink">
             Sign In
           </button>
           <button
-            onClick={() => navigateTo("register")}
+            onClick={() => history.push("register")}
             className="customLink"
           >
             Register

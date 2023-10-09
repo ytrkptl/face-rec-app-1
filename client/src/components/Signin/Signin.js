@@ -1,179 +1,164 @@
-import React, { createRef } from "react";
-import { withRouter } from "react-router-dom";
+import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import Spinner from "../Spinner/Spinner";
 import "./Signin.css";
 
-class Signin extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      signInEmail: "",
-      signInPassword: "",
-      errorMessage: `Something went wrong. 
-              Please try again.`,
-      emailErrorMessage: "",
-      passwordErrorMessage: "",
-      showEmailError: false,
-      showPasswordError: false,
-      showError: false,
-      showSpinner: false,
-    };
-    this.emailRef = createRef();
-    this.passwordRef = createRef();
-  }
+const Signin = ({ loadUser, saveAuthTokenInSession, toggleSignIn }) => {
+  const [signInState, setSignInState] = useState({
+    signInEmail: "",
+    signInPassword: "",
+    errorMessage: `Something went wrong. Please try again.`,
+    emailErrorMessage: "",
+    passwordErrorMessage: "",
+    showEmailError: false,
+    showPasswordError: false,
+    showError: false,
+    showSpinner: false,
+  });
 
-  componentDidMount() {
-    this.emailRef.current.focus();
-  }
+  const {
+    signInEmail,
+    signInPassword,
+    errorMessage,
+    emailErrorMessage,
+    passwordErrorMessage,
+    showEmailError,
+    showPasswordError,
+    showError,
+    showSpinner,
+  } = signInState;
 
-  componentDidUpdate() {
-    if (
-      this.emailRef.current.validity.valid === true &&
-      this.state.showEmailError === true
-    ) {
-      this.setState({ showEmailError: false });
-    } else if (
-      this.emailRef.current.validity.valid === false &&
-      this.state.showEmailError === false
-    ) {
-      this.setState({ showEmailError: true });
-    }
-    if (
-      this.passwordRef.current.validity.valid === true &&
-      this.state.showPasswordError === true
-    ) {
-      this.setState({ showPasswordError: false });
-    } else if (
-      this.passwordRef.current.validity.valid === false &&
-      this.state.showPasswordError === false
-    ) {
-      this.setState({ showPasswordError: true });
-    }
-  }
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
 
-  onEmailChange = (event) => {
-    this.setState({ signInEmail: event.target.value });
+  const navigate = useNavigate();
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setSignInState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
-  onEmailError = (show) => {
+  const onEmailError = (show) => {
     if (show) {
-      this.setState({
+      setSignInState({
+        ...signInState,
         showEmailError: true,
         emailErrorMessage: `Email is a required field and must include a proper email address. Example: abc@gmail.com`,
       });
-      this.emailRef.current.classList.add("highlightClassInSignIn");
-      this.emailRef.current.focus();
+      emailRef?.current?.classList.add("highlightClassInSignIn");
+      emailRef?.current?.focus();
       return;
     }
-    this.setState({ showEmailError: false });
-    this.emailRef.current.classList.remove("highlightClassInSignIn");
+    setSignInState({
+      ...signInState,
+      showEmailError: false,
+    });
+    emailRef?.current?.classList.remove("highlightClassInSignIn");
     return;
   };
 
-  onEnterKeyPressOnEmail = (event) => {
-    if (event.key === "Enter" && this.state.signInEmail === "") {
-      this.onEmailError(true);
+  const onEnterKeyPressOnEmail = (event) => {
+    if (event.key === "Enter" && signInEmail === "") {
+      onEmailError(true);
     } else if (
       event.key === "Enter" &&
-      this.emailRef.current.validity.typeMismatch
+      emailRef?.current?.validity.typeMismatch
     ) {
-      this.onEmailError(true);
+      onEmailError(true);
     } else if (
       event.key === "Enter" &&
-      !this.emailRef.current.validity.typeMismatch
+      !emailRef?.current?.validity.typeMismatch
     ) {
-      this.onEmailError(false);
-      if (this.state.signInPassword === "") {
-        this.passwordRef.current.focus();
+      onEmailError(false);
+      if (signInPassword === "") {
+        passwordRef?.current?.focus();
       } else {
-        this.onSubmitSignIn();
+        onSubmitSignIn();
       }
     }
   };
 
-  onPasswordChange = (event) => {
-    this.setState({ signInPassword: event.target.value });
-  };
-
-  onPasswordError = (showPasswordError) => {
+  const onPasswordError = (showPasswordError) => {
     if (showPasswordError) {
-      this.setState({
+      setSignInState({
+        ...signInState,
         showPasswordError: true,
         passwordErrorMessage:
           "Password is a required field and must be between 8 - 10 characters.",
       });
-      this.passwordRef.current.classList.add("highlightClassInSignIn");
-      this.passwordRef.current.focus();
+      passwordRef?.current?.classList.add("highlightClassInSignIn");
+      passwordRef?.current?.focus();
       return;
     }
-    this.setState({ showPasswordError: false });
-    this.passwordRef.current.classList.remove("highlightClassInSignIn");
+    setSignInState({
+      ...signInState,
+      showPasswordError: false,
+    });
+    passwordRef?.current?.classList.remove("highlightClassInSignIn");
     return;
   };
 
-  onEnterKeyPressOnPassword = (event) => {
-    if (event.key === "Enter" && this.state.signInPassword.length < 8) {
-      this.onPasswordError(true);
-    } else if (
-      event.key === "Enter" &&
-      !this.passwordRef.current.validity.valid
-    ) {
-      this.onPasswordError(true);
-    } else if (event.key === "Enter" && this.state.signInPassword.length >= 8) {
-      this.onPasswordError(false);
-      if (this.state.signInEmail === "") {
-        this.emailRef.current.focus();
+  const onEnterKeyPressOnPassword = (event) => {
+    if (event.key === "Enter" && signInPassword.length < 8) {
+      onPasswordError(true);
+    } else if (event.key === "Enter" && !passwordRef?.current?.validity.valid) {
+      onPasswordError(true);
+    } else if (event.key === "Enter" && signInPassword.length >= 8) {
+      onPasswordError(false);
+      if (signInEmail === "") {
+        emailRef?.current?.focus();
       } else {
-        this.onSubmitSignIn();
+        onSubmitSignIn();
       }
     }
   };
 
-  onSubmitForm = (event) => {
+  const onSubmitForm = (event) => {
     event.preventDefault();
   };
 
-  onSubmitSignIn = () => {
-    if (this.passwordRef.current.value.length < 8) {
-      this.onPasswordError(true);
+  const onSubmitSignIn = () => {
+    if (passwordRef?.current?.value.length < 8) {
+      onPasswordError(true);
     } else {
-      this.onPasswordError(false);
+      onPasswordError(false);
+    }
+    if (signInEmail === "" || emailRef?.current?.validity.typeMismatch) {
+      onEmailError(true);
+    } else {
+      onEmailError(false);
     }
     if (
-      this.state.signInEmail === "" ||
-      this.emailRef.current.validity.typeMismatch
+      !showEmailError &&
+      !showPasswordError &&
+      signInEmail !== "" &&
+      signInPassword !== ""
     ) {
-      this.onEmailError(true);
-    } else {
-      this.onEmailError(false);
-    }
-    if (
-      !this.state.showEmailError &&
-      !this.state.showPasswordError &&
-      this.state.signInEmail !== "" &&
-      this.state.signInPassword !== ""
-    ) {
-      this.setState({ showSpinner: true });
+      setSignInState({ ...signInState, showSpinner: true });
       fetch(`/signin`, {
         method: "post",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: this.state.signInEmail,
-          password: this.state.signInPassword,
+          email: signInEmail,
+          password: signInPassword,
         }),
       })
         .then((response) => response.json())
         .then((data) => {
           if (data && data.success === "true") {
-            this.props.saveAuthTokenInSession(data.token);
-            this.props.loadUser(data.user);
-            this.props.toggleSignIn(true);
+            saveAuthTokenInSession(data.token);
+            loadUser(data.user);
+            toggleSignIn(true);
           } else {
             throw new Error("Something went wrong");
           }
         })
         .catch((err) => {
-          this.setState({
+          setSignInState({
+            ...signInState,
             showError: true,
             errorMessage: `${err.message}`,
             showSpinner: false,
@@ -182,94 +167,84 @@ class Signin extends React.Component {
     }
   };
 
-  render() {
-    return (
-      <article className="signinArticle">
-        <main className="signinMain">
-          <div className="signinMeasure">
-            <fieldset id="sign_up" className="signinFieldset">
-              <legend className="signinLegend">Sign In</legend>
-              {this.state.showError && (
-                <p className="signinErrorDisplay">{this.state.errorMessage}</p>
+  return (
+    <article className="signinArticle">
+      <main className="signinMain">
+        <div className="signinMeasure">
+          <fieldset id="sign_up" className="signinFieldset">
+            <legend className="signinLegend">Sign In</legend>
+            {showError && <p className="signinErrorDisplay">{errorMessage}</p>}
+            <div className="belowLegendDivInSignin" onSubmit={onSubmitForm}>
+              <label className="belowLegendLabelInSignin" htmlFor="signInEmail">
+                Email
+              </label>
+              <input
+                className="belowLegendInputInSignin"
+                type="email"
+                name="signInEmail"
+                id="signInEmail"
+                required
+                ref={emailRef}
+                onChange={handleChange}
+                onKeyDown={onEnterKeyPressOnEmail}
+              />
+              {showEmailError && (
+                <p className="signinErrorDisplay signinFieldsError">
+                  {emailErrorMessage}
+                </p>
               )}
-              <div
-                className="belowLegendDivInSignin"
-                onSubmit={this.onSubmitForm}
-              >
-                <label
-                  className="belowLegendLabelInSignin"
-                  htmlFor="sign-in-email-address"
-                >
-                  Email
-                </label>
-                <input
-                  className="belowLegendInputInSignin"
-                  type="email"
-                  name="email-address"
-                  id="sign-in-email-address"
-                  required
-                  ref={this.emailRef}
-                  onChange={this.onEmailChange}
-                  onKeyDown={this.onEnterKeyPressOnEmail}
-                />
-                {this.state.showEmailError && (
-                  <p className="signinErrorDisplay signinFieldsError">
-                    {this.state.emailErrorMessage}
-                  </p>
-                )}
-              </div>
-              <div
-                className="belowLegendDivInSignin"
-                onSubmit={this.onSubmitForm}
-              >
-                <label className="belowLegendLabelInSignin" htmlFor="password">
-                  Password
-                </label>
-                <input
-                  className="belowLegendInputInSignin"
-                  type="password"
-                  id="password"
-                  name="password"
-                  required
-                  ref={this.passwordRef}
-                  minLength={8}
-                  maxLength={10}
-                  onChange={this.onPasswordChange}
-                  onKeyDown={this.onEnterKeyPressOnPassword}
-                />
-                {this.state.showPasswordError === true && (
-                  <p className="signinErrorDisplay signinFieldsError">
-                    {this.state.passwordErrorMessage}
-                  </p>
-                )}
-              </div>
-            </fieldset>
-            <Spinner showSpinner={this.state.showSpinner} />
-            <input
-              onClick={this.onSubmitSignIn}
-              className="signinButtonInSignin"
-              type="submit"
-              value="Sign in"
-            />
-            <div className="belowSigninButtonDiv">
-              <p
-                onClick={() => this.props.history.push("forgot")}
-                className="registerLinkInSignin"
-              >
-                Forgot Password
-              </p>
-              <p
-                onClick={() => this.props.history.push("register")}
-                className="registerLinkInSignin"
-              >
-                Register
-              </p>
             </div>
+            <div className="belowLegendDivInSignin" onSubmit={onSubmitForm}>
+              <label
+                className="belowLegendLabelInSignin"
+                htmlFor="signInPassword"
+              >
+                Password
+              </label>
+              <input
+                className="belowLegendInputInSignin"
+                type="password"
+                id="signInPassword"
+                name="signInPassword"
+                required
+                ref={passwordRef}
+                minLength={8}
+                maxLength={10}
+                onChange={handleChange}
+                onKeyDown={onEnterKeyPressOnPassword}
+              />
+              {showPasswordError === true && (
+                <p className="signinErrorDisplay signinFieldsError">
+                  {passwordErrorMessage}
+                </p>
+              )}
+            </div>
+          </fieldset>
+          <Spinner showSpinner={showSpinner} />
+          <input
+            onClick={onSubmitSignIn}
+            className="signinButtonInSignin"
+            type="submit"
+            value="Sign in"
+          />
+          <div className="belowSigninButtonDiv">
+            <p
+              onClick={() => navigate("/forgot")}
+              className="registerLinkInSignin"
+            >
+              Forgot Password
+            </p>
+            <p
+              onClick={() => navigate("/register")}
+              className="registerLinkInSignin"
+            >
+              Register
+            </p>
           </div>
-        </main>
-      </article>
-    );
-  }
-}
+        </div>
+      </main>
+    </article>
+  );
+};
 
-export default withRouter(Signin);
+export default Signin;

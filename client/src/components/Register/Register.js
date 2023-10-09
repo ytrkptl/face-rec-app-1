@@ -1,357 +1,396 @@
-import React, { createRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Spinner from "../Spinner/Spinner";
 import "./Register.css";
-import { withRouter } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-class Register extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      registerName: "",
-      registerEmail: "",
-      registerPassword: "",
-      registerConfirmationId: "",
-      nameErrorMessage: "",
-      emailErrorMessage: "",
-      passwordErrorMessage: "",
-      confirmationIdErrorMessage: "",
-      showNameError: false,
-      showEmailError: false,
-      showPasswordError: false,
-      showConfirmationIdError: false,
-      successMessage: "",
-      errorMessage: `Something went wrong. 
+const Register = ({ loadUser, toggleSignIn }) => {
+  const [registerState, setRegisterState] = useState({
+    registerName: "",
+    registerEmail: "",
+    registerPassword: "",
+    registerConfirmationId: "",
+    nameErrorMessage: "",
+    emailErrorMessage: "",
+    passwordErrorMessage: "",
+    confirmationIdErrorMessage: "",
+    showNameError: false,
+    showEmailError: false,
+    showPasswordError: false,
+    showConfirmationIdError: false,
+    successMessage: "",
+    errorMessage: `Something went wrong. 
               Please try again.`,
-      showError: false,
-      showSpinner: false,
-      successData: false,
-      registerStepNum: 1,
-    };
-    this.registerNameRef = createRef();
-    this.registerEmailRef = createRef();
-    this.registerPasswordRef = createRef();
-    this.registerConfirmationIdRef = createRef();
-    this.signinLinkRef = createRef();
-  }
+    showError: false,
+    showSpinner: false,
+    successData: false,
+    registerStepNum: 1,
+  });
 
-  componentDidMount() {
-    this.registerNameRef.current.focus();
-  }
+  const {
+    registerName,
+    registerEmail,
+    registerPassword,
+    registerConfirmationId,
+    nameErrorMessage,
+    emailErrorMessage,
+    passwordErrorMessage,
+    confirmationIdErrorMessage,
+    showNameError,
+    showEmailError,
+    showPasswordError,
+    showConfirmationIdError,
+    successMessage,
+    errorMessage,
+    showError,
+    showSpinner,
+    successData,
+    registerStepNum,
+  } = registerState;
 
-  componentDidUpdate() {
-    if (this.state.registerStepNum === 1) {
-      if (
-        this.registerNameRef.current.validity.valid &&
-        this.state.showNameError
-      ) {
-        this.setState({ showNameError: false });
+  const registerNameRef = useRef(null);
+  const registerEmailRef = useRef(null);
+  const registerPasswordRef = useRef(null);
+  const registerConfirmationIdRef = useRef(null);
+  const signinLinkRef = useRef(null);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    registerNameRef?.current?.focus();
+
+    return () => {};
+  }, [registerNameRef]);
+
+  useEffect(() => {
+    if (registerStepNum === 1) {
+      if (registerNameRef?.current?.validity.valid && showNameError) {
+        setRegisterState({
+          ...registerState,
+          showNameError: false,
+        });
+      } else if (!registerNameRef?.current?.validity.valid && !showNameError) {
+        setRegisterState({
+          ...registerState,
+          showNameError: true,
+        });
+      }
+      if (registerEmailRef?.current?.validity.valid && showEmailError) {
+        setRegisterState({
+          ...registerState,
+          showEmailError: false,
+        });
       } else if (
-        !this.registerNameRef.current.validity.valid &&
-        !this.state.showNameError
+        registerEmailRef?.current?.validity.valid === false &&
+        showEmailError === false
       ) {
-        this.setState({ showNameError: true });
+        setRegisterState({
+          ...registerState,
+          showEmailError: true,
+        });
+      }
+      if (registerPasswordRef?.current?.validity.valid && showPasswordError) {
+        setRegisterState({
+          ...registerState,
+          showPasswordError: false,
+        });
+      } else if (
+        registerPasswordRef?.current?.validity.valid === false &&
+        showPasswordError === false
+      ) {
+        setRegisterState({
+          ...registerState,
+          showPasswordError: true,
+        });
       }
       if (
-        this.registerEmailRef.current.validity.valid === true &&
-        this.state.showEmailError === true
+        registerConfirmationIdRef?.current?.validity.valid &&
+        showConfirmationIdError
       ) {
-        this.setState({ showEmailError: false });
+        setRegisterState({
+          ...registerState,
+          showConfirmationIdError: false,
+        });
       } else if (
-        this.registerEmailRef.current.validity.valid === false &&
-        this.state.showEmailError === false
+        registerConfirmationIdRef?.current?.validity.valid === false &&
+        showConfirmationIdError === false
       ) {
-        this.setState({ showEmailError: true });
-      }
-      if (
-        this.registerPasswordRef.current.validity.valid === true &&
-        this.state.showPasswordError === true
-      ) {
-        this.setState({ showPasswordError: false });
-      } else if (
-        this.registerPasswordRef.current.validity.valid === false &&
-        this.state.showPasswordError === false
-      ) {
-        this.setState({ showPasswordError: true });
-      }
-    } else {
-      if (
-        this.registerConfirmationIdRef.current.validity.valid &&
-        this.state.showConfirmationIdError
-      ) {
-        this.setState({ showConfirmationIdError: false });
-      } else if (
-        !this.registerConfirmationIdRef.current.validity.valid &&
-        !this.state.showConfirmationIdError
-      ) {
-        this.setState({ showConfirmationIdError: true });
+        setRegisterState({
+          ...registerState,
+          showConfirmationIdError: true,
+        });
       }
     }
-
-    if (this.state.successData) {
-      if (this.state.showError) {
-        this.setState({ successData: false });
-      }
+    if (successData && showError) {
+      setRegisterState({
+        ...registerState,
+        successData: false,
+      });
     }
-  }
+  }, [registerStepNum, registerNameRef, showNameError, registerEmailRef, showEmailError, registerPasswordRef, showPasswordError, registerConfirmationIdRef, showConfirmationIdError, successData, showError, registerState]);
 
-  onNameChange = (event) => {
-    this.setState({ registerName: event.target.value });
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setRegisterState({
+      ...registerState,
+      [name]: value,
+    });
   };
 
-  onNameError = (show) => {
+  const onNameError = (show) => {
     if (show) {
-      this.setState({
+      setRegisterState({
+        ...registerState,
         showNameError: true,
         nameErrorMessage: "Name is a required field",
       });
-      this.registerNameRef.current.classList.add("highlightClassInRegister");
-      this.registerNameRef.current.focus();
+      registerNameRef?.current?.classList.add("highlightClassInRegister");
+      registerNameRef?.current?.focus();
       return;
     }
-    this.setState({ showNameError: false });
-    this.registerNameRef.current.classList.remove("highlightClassInRegister");
+    setRegisterState({
+      ...registerState,
+      showNameError: false,
+      nameErrorMessage: "",
+    });
+    registerNameRef?.current?.classList.remove("highlightClassInRegister");
     return;
   };
 
-  onEnterKeyPressOnName = (event) => {
-    if (event.key === "Enter" && this.state.registerName === "") {
-      this.onNameError(true);
-    } else if (event.key === "Enter" && this.state.registerName !== "") {
-      this.onNameError(false);
-      if (this.state.registerEmail === "") {
-        this.registerEmailRef.current.focus();
-      } else if (this.state.registerPassword === "") {
-        this.registerPasswordRef.current.focus();
+  const onEnterKeyPressOnName = (event) => {
+    if (event.key === "Enter" && registerName === "") {
+      onNameError(true);
+    } else if (event.key === "Enter" && registerName !== "") {
+      onNameError(false);
+      if (registerEmail === "") {
+        registerEmailRef?.current?.focus();
+      } else if (registerPassword === "") {
+        registerPasswordRef?.current?.focus();
       } else {
-        this.onRegisterStep1();
+        onRegisterStep1();
       }
     }
   };
 
-  onEmailChange = (event) => {
-    this.setState({ registerEmail: event.target.value });
-  };
-
-  onEmailError = (show) => {
+  const onEmailError = (show) => {
     if (show) {
-      this.setState({
+      setRegisterState({
+        ...registerState,
         showEmailError: true,
         emailErrorMessage: `Email is a required field and must include a proper email address. Example: abc@gmail.com`,
       });
-      this.registerEmailRef.current.classList.add("highlightClassInRegister");
-      this.registerEmailRef.current.focus();
+      registerEmailRef?.current?.classList.add("highlightClassInRegister");
+      registerEmailRef?.current?.focus();
       return;
     }
-    this.setState({ showEmailError: false });
-    this.registerEmailRef.current.classList.remove("highlightClassInRegister");
+    setRegisterState({
+      ...registerState,
+      showEmailError: false,
+    });
+    registerEmailRef?.current?.classList.remove("highlightClassInRegister");
     return;
   };
 
-  onEnterKeyPressOnEmail = (event) => {
-    if (event.key === "Enter" && this.state.registerEmail === "") {
-      this.onEmailError(true);
+  const onEnterKeyPressOnEmail = (event) => {
+    if (event.key === "Enter" && registerEmail === "") {
+      onEmailError(true);
     } else if (
       event.key === "Enter" &&
-      this.registerEmailRef.current.validity.typeMismatch
+      registerEmailRef?.current?.validity.typeMismatch
     ) {
-      this.onEmailError(true);
+      onEmailError(true);
     } else if (
       event.key === "Enter" &&
-      !this.registerEmailRef.current.validity.typeMismatch
+      !registerEmailRef?.current?.validity.typeMismatch
     ) {
-      this.onEmailError(false);
-      if (this.state.registerName === "") {
-        this.registerNameRef.current.focus();
-      } else if (this.state.registerPassword === "") {
-        this.registerPasswordRef.current.focus();
+      onEmailError(false);
+      if (registerName === "") {
+        registerNameRef?.current?.focus();
+      } else if (registerPassword === "") {
+        registerPasswordRef?.current?.focus();
       } else {
-        this.onRegisterStep1();
+        onRegisterStep1();
       }
     }
   };
 
-  onPasswordChange = (event) => {
-    this.setState({ registerPassword: event.target.value });
-  };
-
-  onPasswordError = (showPasswordError) => {
+  const onPasswordError = (showPasswordError) => {
     if (showPasswordError) {
-      this.setState({
+      setRegisterState({
+        ...registerState,
         showPasswordError: true,
         passwordErrorMessage:
           "Password is a required field and must be between 8 - 10 characters.",
       });
-      this.registerPasswordRef.current.classList.add(
-        "highlightClassInRegister"
-      );
-      this.registerPasswordRef.current.focus();
+      registerPasswordRef?.current?.classList.add("highlightClassInRegister");
+      registerPasswordRef?.current?.focus();
       return;
     }
-    this.setState({ showPasswordError: false });
-    this.registerPasswordRef.current.classList.remove(
-      "highlightClassInRegister"
-    );
+    setRegisterState({
+      ...registerState,
+      showPasswordError: false,
+    });
+    registerPasswordRef?.current?.classList.remove("highlightClassInRegister");
     return;
   };
 
-  onEnterKeyPressOnPassword = (event) => {
-    if (event.key === "Enter" && this.state.registerPassword.length < 8) {
-      this.onPasswordError(true);
+  const onEnterKeyPressOnPassword = (event) => {
+    if (event.key === "Enter" && registerPassword.length < 8) {
+      onPasswordError(true);
     } else if (
       event.key === "Enter" &&
-      !this.registerPasswordRef.current.validity.valid
+      !registerPasswordRef?.current?.validity.valid
     ) {
-      this.onPasswordError(true);
-    } else if (
-      event.key === "Enter" &&
-      this.state.registerPassword.length >= 8
-    ) {
-      this.onPasswordError(false);
-      if (this.state.registerName === "") {
-        this.registerNameRef.current.focus();
-      } else if (this.state.registerEmail === "") {
-        this.registerEmailRef.current.focus();
+      onPasswordError(true);
+    } else if (event.key === "Enter" && registerPassword.length >= 8) {
+      onPasswordError(false);
+      if (registerName === "") {
+        registerNameRef?.current?.focus();
+      } else if (registerEmail === "") {
+        registerEmailRef?.current?.focus();
       } else {
-        this.onRegisterStep1();
+        onRegisterStep1();
       }
     }
   };
 
-  onConfirmationIdChange = (event) => {
-    this.setState({ registerConfirmationId: event.target.value });
-  };
-
-  onConfirmationIdError = (show) => {
+  const onConfirmationIdError = (show) => {
     if (show) {
-      this.setState({
+      setRegisterState({
+        ...registerState,
         showConfirmationIdError: true,
         confirmationIdErrorMessage:
           "Confirmation Id is required and must match the code you received via email",
       });
-      this.registerConfirmationIdRef.current.classList.add(
+      registerConfirmationIdRef?.current?.classList.add(
         "highlightClassInRegister"
       );
-      this.registerConfirmationIdRef.current.focus();
+      registerConfirmationIdRef?.current?.focus();
       return;
     }
-    this.setState({ showConfirmationIdError: false });
-    this.registerConfirmationIdRef.current.classList.remove(
+    setRegisterState({
+      ...registerState,
+      showConfirmationIdError: false,
+    });
+    registerConfirmationIdRef?.current?.classList.remove(
       "highlightClassInRegister"
     );
     return;
   };
 
-  onEnterKeyPressOnConfirmationId = (event) => {
-    if (event.key === "Enter" && this.state.registerConfirmationId === "") {
-      this.onConfirmationIdError(true);
-    } else if (
-      event.key === "Enter" &&
-      this.state.registerConfirmationId !== ""
-    ) {
-      this.onConfirmationIdError(false);
-      this.onRegisterStep2();
+  const onEnterKeyPressOnConfirmationId = (event) => {
+    if (event.key === "Enter" && registerConfirmationId === "") {
+      onConfirmationIdError(true);
+    } else if (event.key === "Enter" && registerConfirmationId !== "") {
+      onConfirmationIdError(false);
+      onRegisterStep2();
     }
   };
 
-  saveAuthTokenInSession = (token) => {
+  const saveAuthTokenInSession = (token) => {
     window.sessionStorage.setItem("token", token);
   };
 
-  onSubmitForm = (event) => {
+  const onSubmitForm = (event) => {
     event.preventDefault();
   };
 
-  onRegisterStep1 = async () => {
-    if (this.state.registerStepNum === 1) {
-      if (this.registerPasswordRef.current.value.length < 8) {
-        this.onPasswordError(true);
+  const onRegisterStep1 = async () => {
+    if (registerStepNum === 1) {
+      if (registerPasswordRef?.current?.value.length < 8) {
+        onPasswordError(true);
       } else {
-        this.onPasswordError(false);
+        onPasswordError(false);
       }
       if (
-        this.state.registerEmail === "" ||
-        this.registerEmailRef.current.validity.typeMismatch
+        registerEmail === "" ||
+        registerEmailRef?.current?.validity.typeMismatch
       ) {
-        this.onEmailError(true);
+        onEmailError(true);
       } else {
-        this.onEmailError(false);
+        onEmailError(false);
       }
-      if (this.state.registerName === "") {
-        this.onNameError(true);
+      if (registerName === "") {
+        onNameError(true);
       } else {
-        this.onNameError(false);
+        onNameError(false);
       }
     }
     if (
-      !this.state.showNameError &&
-      !this.state.showEmailError &&
-      !this.state.showPasswordError &&
-      this.state.registerName !== "" &&
-      this.state.registerEmail !== "" &&
-      this.state.registerPassword !== ""
+      !showNameError &&
+      !showEmailError &&
+      !showPasswordError &&
+      registerName !== "" &&
+      registerEmail !== "" &&
+      registerPassword !== ""
     ) {
-      this.setState({ showSpinner: true });
-      this.signinLinkRef.current.classList.add("registerStep2");
+      setRegisterState({...registerState, showSpinner: true });
+      signinLinkRef?.current?.classList.add("registerStep2");
       const response = await fetch(`/register-step-1`, {
         method: "post",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: this.state.registerName,
-          email: this.state.registerEmail,
-          password: this.state.registerPassword,
+          name: registerName,
+          email: registerEmail,
+          password: registerPassword,
         }),
       });
       const data = await response.json();
       if (response.status === 400) {
-        this.setState({
+        setRegisterState({
+          ...registerState,
           showError: true,
           showSpinner: false,
           registerStepNum: 1,
           errorMessage: `${data}`,
         });
       } else if (response.status === 200) {
-        this.setState({
+        setRegisterState({
+          ...registerState,
           showError: false,
           showSpinner: false,
           registerStepNum: 2,
           successData: true,
           successMessage: `${data}`,
         });
-        this.signinLinkRef.current.classList.remove("step2Link");
+        signinLinkRef?.current?.classList.remove("step2Link");
       }
     }
     return;
   };
 
-  onRegisterStep2 = async () => {
+  const onRegisterStep2 = async () => {
     try {
-      if (this.state.registerConfirmationId === "") {
-        this.onConfirmationIdError(true);
+      if (registerConfirmationId === "") {
+        onConfirmationIdError(true);
         return;
       }
-      this.onConfirmationIdError(false);
-      this.setState({ showSpinner: true });
+      onConfirmationIdError(false);
+      setRegisterState({
+        ...registerState, showSpinner: true });
       const response = await fetch(`/register-step-2`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          confirmationId: this.state.registerConfirmationId,
+          confirmationId: registerConfirmationId,
         }),
       });
       const data = await response.json();
       if (data.userId && data.success === 200) {
-        this.saveAuthTokenInSession(data.token);
-        await this.getProfileAndSignIn(data);
+        saveAuthTokenInSession(data.token);
+        await getProfileAndSignIn(data);
         return;
       } else {
-        this.setState({
+        setRegisterState({
+          ...registerState,
           showError: true,
           errorMessage: `${data}`,
           showSpinner: false,
         });
       }
     } catch (error) {
-      this.setState({
+      setRegisterState({
+        ...registerState,
         showError: true,
         errorMessage: `Something went wrong. Please try again.`,
         showSpinner: false,
@@ -359,7 +398,7 @@ class Register extends React.Component {
     }
   };
 
-  getProfileAndSignIn = async (data) => {
+  const getProfileAndSignIn = async (data) => {
     try {
       const resp = await fetch(`/profile/${data.userId}`, {
         method: "GET",
@@ -373,8 +412,8 @@ class Register extends React.Component {
         console.log(resp, user);
       }
       if (user && user.email) {
-        this.props.loadUser(user);
-        this.props.toggleSignIn(true);
+        loadUser(user);
+        toggleSignIn(true);
       } else {
         throw new Error("Something went wrong");
       }
@@ -382,7 +421,8 @@ class Register extends React.Component {
       if (process.env.NODE_ENV !== "production") {
         console.log(error);
       }
-      this.setState({
+      setRegisterState({
+        ...registerState,
         showError: true,
         errorMessage: `Something went wrong. Please try again.`,
         showSpinner: false,
@@ -390,34 +430,36 @@ class Register extends React.Component {
     }
   };
 
-  onResendEmail = () => {
-    this.setState({ registerStepNum: 2, showSpinner: true });
-    this.signinLinkRef.current.classList.add("registerStep2");
+  const onResendEmail = () => {
+    setRegisterState({...registerState, registerStepNum: 2, showSpinner: true });
+    signinLinkRef?.current?.classList.add("registerStep2");
     fetch(`/register-step-1`, {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        name: this.state.registerName,
-        email: this.state.registerEmail,
-        password: this.state.registerPassword,
+        name: registerName,
+        email: registerEmail,
+        password: registerPassword,
       }),
     })
       .then((response) => response.json())
       .then((data) => {
-        this.setState({
+        setRegisterState({
+          ...registerState,
           showError: false,
           showSpinner: false,
           registerStepNum: 2,
           successData: true,
           successMessage: `${data}`,
         });
-        this.signinLinkRef.current.classList.remove("step2Link");
+        signinLinkRef?.current?.classList.remove("step2Link");
       })
       .catch((error) => {
         if (process.env.NODE_ENV !== "production") {
           console.log(error);
         }
-        this.setState({
+        setRegisterState({
+          ...registerState,
           showError: true,
           showSpinner: false,
           registerStepNum: 1,
@@ -425,161 +467,155 @@ class Register extends React.Component {
       });
   };
 
-  render() {
-    return (
-      <article className="registerArticle">
-        <main className="registerMain">
-          <div className="registerMeasure">
-            <fieldset id="sign_up" className="registerFieldset">
-              <legend className="registerLegend">Register</legend>
-              <h4 className="register-steps">{`Step ${this.state.registerStepNum} of 2`}</h4>
-              {this.state.showError && (
-                <p className="registerErrorDisplay">
-                  {this.state.errorMessage}
-                </p>
-              )}
-              {this.state.successData && (
-                <p className="registerErrorDisplay success">
-                  {this.state.successMessage}
-                </p>
-              )}
-              <Spinner showSpinner={this.state.showSpinner} />
-              {this.state.registerStepNum === 1 ? (
-                <div>
-                  <div className="belowLegendDiv" onSubmit={this.onSubmitForm}>
-                    <label className="belowLegendLabel" htmlFor="name">
-                      Name
-                    </label>
-                    <input
-                      className="belowLegendInput"
-                      type="text"
-                      name="name"
-                      id="name"
-                      required
-                      ref={this.registerNameRef}
-                      placeholder="Enter name here"
-                      onChange={this.onNameChange}
-                      onKeyDown={this.onEnterKeyPressOnName}
-                    />
-                    {this.state.showNameError && (
-                      <p className="registerErrorDisplay registerFieldsError">
-                        {this.state.nameErrorMessage}
-                      </p>
-                    )}
-                  </div>
-                  <div className="belowLegendDiv" onSubmit={this.onSubmitForm}>
-                    <label
-                      className="belowLegendLabel"
-                      htmlFor="register-email-address"
-                    >
-                      Email
-                    </label>
-                    <input
-                      className="belowLegendInput"
-                      type="email"
-                      required
-                      name="register-email-address"
-                      id="register-email-address"
-                      ref={this.registerEmailRef}
-                      placeholder="Enter email here"
-                      onChange={this.onEmailChange}
-                      onKeyDown={this.onEnterKeyPressOnEmail}
-                    />
-                    {this.state.showEmailError && (
-                      <p className="registerErrorDisplay registerFieldsError">
-                        {this.state.emailErrorMessage}
-                      </p>
-                    )}
-                  </div>
-                  <div className="belowLegendDiv" onSubmit={this.onSubmitForm}>
-                    <label
-                      className="belowLegendLabel"
-                      htmlFor="register-password"
-                    >
-                      Password
-                    </label>
-                    <input
-                      className="belowLegendInput"
-                      type="password"
-                      name="register-password"
-                      id="register-password"
-                      required
-                      ref={this.registerPasswordRef}
-                      placeholder="sshhh"
-                      minLength={8}
-                      maxLength={10}
-                      onChange={this.onPasswordChange}
-                      onKeyDown={this.onEnterKeyPressOnPassword}
-                    />
-                    {this.state.showPasswordError && (
-                      <p className="registerErrorDisplay registerFieldsError">
-                        {this.state.passwordErrorMessage}
-                      </p>
-                    )}
-                    <input
-                      onClick={this.onRegisterStep1}
-                      className="registerButton"
-                      type="button"
-                      value="Register"
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="belowLegendDiv" onSubmit={this.onSubmitForm}>
-                  <label className="belowLegendLabel" htmlFor="confirmation-id">
-                    Confirmation Id
+  return (
+    <article className="registerArticle">
+      <main className="registerMain">
+        <div className="registerMeasure">
+          <fieldset id="sign_up" className="registerFieldset">
+            <legend className="registerLegend">Register</legend>
+            <h4 className="register-steps">{`Step ${registerStepNum} of 2`}</h4>
+            {showError && (
+              <p className="registerErrorDisplay">{errorMessage}</p>
+            )}
+            {successData && (
+              <p className="registerErrorDisplay success">{successMessage}</p>
+            )}
+            <Spinner showSpinner={showSpinner} />
+            {registerStepNum === 1 ? (
+              <div>
+                <div className="belowLegendDiv" onSubmit={onSubmitForm}>
+                  <label className="belowLegendLabel" htmlFor="registerName">
+                    Name
                   </label>
                   <input
                     className="belowLegendInput"
                     type="text"
-                    name="confirmation-id"
-                    id="confirmation-id"
+                    name="registerName"
+                    id="registerName"
                     required
-                    ref={this.registerConfirmationIdRef}
-                    placeholder="Paste code here"
-                    autoFocus
-                    onChange={this.onConfirmationIdChange}
-                    onKeyDown={this.onEnterKeyPressOnConfirmationId}
+                    ref={registerNameRef}
+                    placeholder="Enter name here"
+                    onChange={handleChange}
+                    onKeyDown={onEnterKeyPressOnName}
                   />
-                  {this.state.showConfirmationIdError && (
+                  {showNameError && (
                     <p className="registerErrorDisplay registerFieldsError">
-                      {this.state.confirmationIdErrorMessage}
+                      {nameErrorMessage}
+                    </p>
+                  )}
+                </div>
+                <div className="belowLegendDiv" onSubmit={onSubmitForm}>
+                  <label className="belowLegendLabel" htmlFor="registerEmail">
+                    Email
+                  </label>
+                  <input
+                    className="belowLegendInput"
+                    type="email"
+                    required
+                    name="registerEmail"
+                    id="registerEmail"
+                    ref={registerEmailRef}
+                    placeholder="Enter email here"
+                    onChange={handleChange}
+                    onKeyDown={onEnterKeyPressOnEmail}
+                  />
+                  {showEmailError && (
+                    <p className="registerErrorDisplay registerFieldsError">
+                      {emailErrorMessage}
+                    </p>
+                  )}
+                </div>
+                <div className="belowLegendDiv" onSubmit={onSubmitForm}>
+                  <label
+                    className="belowLegendLabel"
+                    htmlFor="registerPassword"
+                  >
+                    Password
+                  </label>
+                  <input
+                    className="belowLegendInput"
+                    type="password"
+                    name="registerPassword"
+                    id="registerPassword"
+                    required
+                    ref={registerPasswordRef}
+                    placeholder="sshhh"
+                    minLength={8}
+                    maxLength={10}
+                    onChange={handleChange}
+                    onKeyDown={onEnterKeyPressOnPassword}
+                  />
+                  {showPasswordError && (
+                    <p className="registerErrorDisplay registerFieldsError">
+                      {passwordErrorMessage}
                     </p>
                   )}
                   <input
-                    onClick={this.onRegisterStep2}
+                    onClick={onRegisterStep1}
                     className="registerButton"
-                    type="submit"
-                    value="Create Account"
-                  />
-                  <input
-                    onClick={this.onResendEmail}
-                    className="registerButton"
-                    type="submit"
-                    value="Resend Email"
+                    type="button"
+                    value="Register"
                   />
                 </div>
-              )}
-            </fieldset>
-            <div className="belowRegisterButtonDiv">
-              {this.state.registerStepNum === 2 && (
-                <span className="belowRegisterButtonSpan1">
-                  Or, if you already have an account, go back to
-                </span>
-              )}
-              <span
-                ref={this.signinLinkRef}
-                onClick={() => this.props.history.push("signin")}
-                className="signinLinkInRegister"
-              >
-                Sign In
+              </div>
+            ) : (
+              <div className="belowLegendDiv" onSubmit={onSubmitForm}>
+                <label
+                  className="belowLegendLabel"
+                  htmlFor="registerConfirmationId"
+                >
+                  Confirmation Id
+                </label>
+                <input
+                  className="belowLegendInput"
+                  type="text"
+                  name="registerConfirmationId"
+                  id="registerConfirmationId"
+                  required
+                  ref={registerConfirmationIdRef}
+                  placeholder="Paste code here"
+                  autoFocus
+                  onChange={handleChange}
+                  onKeyDown={onEnterKeyPressOnConfirmationId}
+                />
+                {showConfirmationIdError && (
+                  <p className="registerErrorDisplay registerFieldsError">
+                    {confirmationIdErrorMessage}
+                  </p>
+                )}
+                <input
+                  onClick={onRegisterStep2}
+                  className="registerButton"
+                  type="submit"
+                  value="Create Account"
+                />
+                <input
+                  onClick={onResendEmail}
+                  className="registerButton"
+                  type="submit"
+                  value="Resend Email"
+                />
+              </div>
+            )}
+          </fieldset>
+          <div className="belowRegisterButtonDiv">
+            {registerStepNum === 2 && (
+              <span className="belowRegisterButtonSpan1">
+                Or, if you already have an account, go back to
               </span>
-            </div>
+            )}
+            <span
+              ref={signinLinkRef}
+              onClick={() => navigate("/signin")}
+              className="signinLinkInRegister"
+            >
+              Sign In
+            </span>
           </div>
-        </main>
-      </article>
-    );
-  }
-}
+        </div>
+      </main>
+    </article>
+  );
+};
 
-export default withRouter(Register);
+export default Register;

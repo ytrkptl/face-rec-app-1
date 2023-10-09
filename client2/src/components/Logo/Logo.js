@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Tilt } from 'react-tilt';
+import React, { useState, useEffect } from 'react';
+import Tilt from 'react-tilt';
 import LogoImg from './thunderstorm4.png';
 import './Logo.css';
 

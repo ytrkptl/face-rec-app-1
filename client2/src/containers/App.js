@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Route, redirect, Routes, Outlet } from "react-router-dom";
+import React, { Component } from "react";
+import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 import { RemoveScroll } from "react-remove-scroll";
 import ParticlesComponent from "../components/Particles/Particles";
 import Navigation from "../components/Navigation/Navigation";
@@ -14,8 +14,12 @@ import Profile from "../components/Profile/Profile";
 import Footer from "../components/Footer/Footer";
 import Lightning from "../components/Lightning/Lightning";
 import * as filestack from "filestack-js";
+import ReactGA from "react-ga";
+
 import "./App.css";
 
+ReactGA.initialize(`${process.env.REACT_APP_GA_TRACKING_ID}`);
+ReactGA.pageview(window.location.pathname + window.location.search);
 const client = filestack.init(`${process.env.REACT_APP_FILESTACK}`);
 
 // Create-React-App automatically detects and uses env varialbes
@@ -41,11 +45,13 @@ const initialState = {
   },
 };
 
-// convert to functional component
-const App = () => {
-  const [appState, setAppState] = useState(initialState);
+class App extends Component {
+  constructor() {
+    super();
+    this.state = initialState;
+  }
 
-  useEffect(() => {
+  componentDidMount() {
     const token = window.sessionStorage.getItem("token");
     if (token) {
       fetch(`/signin`, {
@@ -68,8 +74,8 @@ const App = () => {
               .then((resp) => resp.json())
               .then((user) => {
                 if (user && user.email) {
-                  loadUser(user);
-                  toggleSignIn(true);
+                  this.loadUser(user);
+                  this.toggleSignIn(true);
                 }
               })
               .catch((err) =>
@@ -83,14 +89,11 @@ const App = () => {
         .catch((err) =>
           console.log(err + `error in componentDidMount in App.js`)
         );
-
-      return () => {};
     }
-  }, []);
+  }
 
-  const loadUser = (data) => {
-    setAppState({
-      ...appState,
+  loadUser = (data) => {
+    this.setState({
       user: {
         id: data.id,
         name: data.name,
@@ -107,20 +110,18 @@ const App = () => {
       data.handle === undefined ||
       data.handle === null
     ) {
-      setAppState({
-        ...appState,
+      this.setState({
         profilePhotoUrl:
           "https://avatar-letter.herokuapp.com/api/file/set1/big/u/png",
       });
     } else {
-      setAppState({
-        ...appState,
+      this.setState({
         profilePhotoUrl: `https://cdn.filestackcontent.com/resize=height:200,width:200/${data.handle}`,
       });
     }
   };
 
-  const calculateFaceLocations = (data) => {
+  calculateFaceLocations = (data) => {
     if (
       data &&
       data.outputs &&
@@ -143,26 +144,26 @@ const App = () => {
     return;
   };
 
-  const displayFaceBox = (boxes) => {
+  displayFaceBox = (boxes) => {
     if (boxes) {
-      setAppState({ ...appState, boxes: boxes });
+      this.setState({ boxes: boxes });
     }
   };
 
-  const saveAuthTokenInSession = (token) => {
+  saveAuthTokenInSession = (token) => {
     window.sessionStorage.setItem("token", token);
   };
 
-  const removeAuthTokenFromSession = (token) => {
+  removeAuthTokenFromSession = (token) => {
     window.sessionStorage.removeItem(token);
   };
 
-  const changeImageUrl = (source) => {
-    setAppState({ ...appState, imageUrl: source });
-    onButtonSubmit();
+  changeImageUrl = (source) => {
+    this.setState({ imageUrl: source });
+    this.onButtonSubmit();
   };
 
-  const onButtonSubmit = () => {
+  onButtonSubmit = () => {
     fetch(`/imageurl`, {
       method: "post",
       headers: {
@@ -170,7 +171,7 @@ const App = () => {
         Authorization: window.sessionStorage.getItem("token"),
       },
       body: JSON.stringify({
-        input: appState.imageUrl,
+        input: this.state.imageUrl,
       }),
     })
       .then((response) => response.json())
@@ -183,30 +184,31 @@ const App = () => {
               Authorization: window.sessionStorage.getItem("token"),
             },
             body: JSON.stringify({
-              id: appState.user.id,
+              id: this.state.user.id,
             }),
           })
             .then((response) => response.json())
             .then((count) => {
-              setAppState((prevState) => ({
-                ...prevState,
+              this.setState((prevState) => ({
                 user: {
                   ...prevState.user,
                   entries: count,
                 },
               }));
             })
-            .catch(() =>
+            .catch((err) =>
               console.log(`error onButtonSubmit method in App.js line 173`)
             );
         }
-        displayFaceBox(calculateFaceLocations(response));
+        this.displayFaceBox(this.calculateFaceLocations(response));
       })
-      .catch(() => console.log(`error upon submit button in App.js line 177`));
+      .catch((err) =>
+        console.log(`error upon submit button in App.js line 177`)
+      );
   };
 
-  const signOut = async () => {
-    setAppState(initialState);
+  signOut = async () => {
+    this.setState(initialState);
     try {
       const response = await fetch(`/signout`, {
         method: "DELETE",
@@ -217,24 +219,24 @@ const App = () => {
       });
       const value = await response.json();
       if (value) {
-        removeAuthTokenFromSession("token");
-        toggleSignIn(false);
+        this.removeAuthTokenFromSession("token");
+        this.toggleSignIn(false);
       }
     } catch (error) {
       return console.log(`error onRouteChange in App.js line 202`);
     }
   };
 
-  const toggleModal = () => {
-    setAppState((prevState) => ({
+  toggleModal = () => {
+    this.setState((prevState) => ({
       ...prevState,
       isProfileOpen: !prevState.isProfileOpen,
     }));
   };
 
-  const changeProfileImage = (url, handle) => {
-    setAppState({ ...appState, profilePhotoUrl: `${url}` });
-    fetch(`/upload/${appState.user.id}`, {
+  changeProfileImage = (url, handle) => {
+    this.setState({ profilePhotoUrl: `${url}` });
+    fetch(`/upload/${this.state.user.id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -247,7 +249,7 @@ const App = () => {
       .then((resp) => {
         const token = window.sessionStorage.getItem("token");
         if (resp === "success inserted handle in db") {
-          fetch(`/profile/${appState.user.id}`, {
+          fetch(`/profile/${this.state.user.id}`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -257,125 +259,123 @@ const App = () => {
             .then((resp) => resp.json())
             .then((user) => {
               if (user && user.email) {
-                loadUser(user);
+                this.loadUser(user);
               }
             });
         }
       })
-      .catch(() =>
+      .catch((err) =>
         console.log(`error running changeProfileImage in App.js line 249`)
       );
   };
 
-  const showLightning = () => {
-    setAppState((prevState) => ({
+  showLightning = () => {
+    this.setState((prevState) => ({
       ...prevState,
       lightningOn: !prevState.lightningOn,
     }));
   };
 
-  const toggleSignIn = (val) => {
-    setAppState({ ...appState, isSignedIn: val });
-    val ? redirect("/") : redirect("/signin");
+  toggleSignIn = (val) => {
+    this.setState({ isSignedIn: val });
+    val ? this.props.history.push("/") : this.props.history.push("/signin");
   };
 
-  const {
-    isSignedIn,
-    imageUrl,
-    boxes,
-    isProfileOpen,
-    lightningOn,
-    user,
-    profilePhotoUrl,
-  } = appState;
-  return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <div className="App">
-            {lightningOn && (
-              <>
-                <ParticlesComponent lightningOn={lightningOn} />
-                <Lightning lightningOn={lightningOn} />
-              </>
-            )}
-            <Navigation
-              className="row1"
-              isSignedIn={isSignedIn}
-              toggleModal={toggleModal}
-              profilePhotoUrl={profilePhotoUrl}
-              showLightning={showLightning}
-              signOut={signOut}
-            />
-            {isProfileOpen && (
-              <Modal>
-                <RemoveScroll>
-                  <Profile
-                    isProfileOpen={isProfileOpen}
-                    toggleModal={toggleModal}
-                    loadUser={loadUser}
-                    profilePhotoUrl={profilePhotoUrl}
-                    changeProfileImage={changeProfileImage}
-                    client={client}
-                    user={user}
-                    signOut={signOut}
-                  />
-                </RemoveScroll>
-              </Modal>
-            )}
-            <div className="row2">
-              <Outlet />
-            </div>
-            <Footer className="row3" />
-          </div>
-        }
-      >
-        <Route
-          index
-          element={
-            <>
+  render() {
+    const {
+      isSignedIn,
+      imageUrl,
+      boxes,
+      isProfileOpen,
+      lightningOn,
+      user,
+      profilePhotoUrl,
+    } = this.state;
+    return (
+      <div className="App">
+        {lightningOn && (
+          <>
+            <ParticlesComponent lightningOn={lightningOn} />
+            <Lightning lightningOn={lightningOn} />
+          </>
+        )}
+        <Navigation
+          className="row1"
+          isSignedIn={isSignedIn}
+          toggleModal={this.toggleModal}
+          profilePhotoUrl={profilePhotoUrl}
+          showLightning={this.showLightning}
+          signOut={this.signOut}
+        />
+        {isProfileOpen && (
+          <Modal>
+            <RemoveScroll>
+              <Profile
+                isProfileOpen={isProfileOpen}
+                toggleModal={this.toggleModal}
+                loadUser={this.loadUser}
+                profilePhotoUrl={profilePhotoUrl}
+                changeProfileImage={this.changeProfileImage}
+                client={client}
+                user={user}
+                signOut={this.signOut}
+              />
+            </RemoveScroll>
+          </Modal>
+        )}
+        <div className="row2">
+          <Switch>
+            <Route exact path="/">
               {isSignedIn ? (
                 <div className="rankAndImageFormWrapper">
                   <Rank name={user.name} entries={user.entries} />
                   <UploadButtonWithPicker
-                    changeImageUrl={changeImageUrl}
+                    changeImageUrl={this.changeImageUrl}
                     client={client}
                   />
                   <FaceRecognition boxes={boxes} imageUrl={imageUrl} />
                 </div>
               ) : (
-                <h1>you are not signed in</h1>
+                <Redirect to="/signin" />
               )}
-            </>
-          }
-        />
-        <Route
-          exact
-          path="signin"
-          element={
-            <Signin
-              loadUser={loadUser}
-              saveAuthTokenInSession={saveAuthTokenInSession}
-              toggleSignIn={toggleSignIn}
+            </Route>
+            <Route
+              exact
+              path="/signin"
+              render={() => {
+                return (
+                  <Signin
+                    loadUser={this.loadUser}
+                    saveAuthTokenInSession={this.saveAuthTokenInSession}
+                    toggleSignIn={this.toggleSignIn}
+                  />
+                );
+              }}
             />
-          }
-        />
-        <Route
-          exact
-          path="register"
-          element={
-            <Register
-              loadUser={loadUser}
-              saveAuthTokenInSession={saveAuthTokenInSession}
-              toggleSignIn={toggleSignIn}
+            <Route
+              exact
+              path="/register"
+              render={() => (
+                <Register
+                  loadUser={this.loadUser}
+                  saveAuthTokenInSession={this.saveAuthTokenInSession}
+                  toggleSignIn={this.toggleSignIn}
+                />
+              )}
             />
-          }
-        />
-        <Route exact path="forgot" element={<Forgot />} />
-      </Route>
-    </Routes>
-  );
-};
+            <Route
+              exact
+              path="/forgot"
+              render={() => {
+                return <Forgot />;
+              }}
+            />
+          </Switch>
+        </div>
+        <Footer className="row3" />
+      </div>
+    );
+  }
+}
 
-export default App;
+export default withRouter(App);
