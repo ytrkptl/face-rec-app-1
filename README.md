@@ -18,7 +18,6 @@ The frontend is built using create-react-app.
   - inside the terminal
   - run
 
-
     heroku pg:psql
 
 Source: `https://www.taniarascia.com/node-express-postgresql-heroku/`
