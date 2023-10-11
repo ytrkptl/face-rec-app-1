@@ -9,7 +9,7 @@ if(process.env.NODE_ENV !== "production") {
 sgMail.setApiKey(process.env.FACE_REC_APP_1_SG_API_KEY);
 
 export const handleSendingEmailConfirmation = (someToken, req, res) => {
-  // const { email } = req.body;
+  const { email } = req.body;
 
   const msg = {
     to: `${email}`,
