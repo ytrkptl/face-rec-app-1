@@ -38,6 +38,6 @@
     "heroku-postbuild": "cd client && npm install && npm install --only=dev --no-shrinkwrap && npm run build"
   },
   "keywords": [],
-  "author": "",
+  "author": "Yatrik Patel",
   "license": "ISC"
 }
