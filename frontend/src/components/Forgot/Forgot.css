@@ -1,0 +1,206 @@
+.forgotArticle {
+	margin-right: auto;
+	margin-left: auto;
+	margin-top: 2rem;
+	margin-bottom: 2rem;
+	max-width: 400px;
+	width: 100%;
+	box-shadow: 4px 4px 8px 0 rgba( 0, 0, 0, .2 );
+	border-radius: 0.5rem;
+	border-color: rgba( 0, 0, 0, .1 );
+	border-style: solid;
+  border-width: 1px;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+	text-align: center;
+  background-color: rgba(255, 255, 255, 0.747);
+}
+
+.forgotMain {
+	padding: 2rem;
+	color: rgba( 0, 0, 0, .8 );
+	box-sizing: border-box;
+}
+
+.forgotMeasure {
+	max-width: 30em;
+	box-sizing: border-box;
+}
+
+.forgotFieldset {
+	margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 1px;
+  box-sizing: border-box;
+}
+
+.forgotLegend {
+	margin-left: 0;
+	margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+  font-weight: 600;
+  font-size: 3rem;
+  box-sizing: border-box;
+}
+
+.steps {
+	color: red;
+	font-weight: bold;
+}
+
+.forgotErrorDisplay {
+	color: red;
+	font-family: 'Roboto', sans-serif;
+	width: 230.44px;
+	display: flex;
+	justify-content: center;
+	word-wrap: break-word;
+	margin-bottom: 0px;
+	margin: auto;
+}
+
+.forgotFieldsError {
+	margin-top: 0px;
+	padding: 0;
+}
+
+.belowLegendDivInForgot {
+	margin: 10px 0px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.belowLegendLabelInForgot {
+	font-size: .875rem;
+	line-height: 1.5;
+	font-weight: 600;
+	display: block;
+}
+
+.belowLegendInputInForgot {
+	box-sizing: border-box;
+	padding: .5rem;
+	background-color: transparent;
+	-webkit-appearance: none;
+	border: 1px solid black;
+	margin: auto;
+	outline: none;
+	width: 230.44px;
+	display: block;
+}
+
+.belowLegendInputInForgot::placeholder {
+	color: rgb(24, 24, 24);
+}
+
+.belowLegendInputInForgot:hover {
+	background-color: #000;
+	border-color: white;
+	color: white;
+}
+
+.highlightClassInForgot {
+	border: 2px solid red;
+}
+.highlightClassInForgot:hover {
+	border: 2px solid red;
+}
+.highlightClassInForgot:active, .highlightClassInForgot:focus {
+	border: 2px solid red;
+}
+.highlightClassInForgot:invalid {
+	border: 2px solid red;
+}
+.highlightClassInForgot:valid {
+	border: 1px solid black;
+}
+
+
+.passwordsDontMatchClass {
+	border: 1px solid black;
+}
+.passwordsDontMatchClass:hover {
+	border: 1px solid black;
+}
+.passwordsDontMatchClass:active, .passwordsDontMatchClass:focus {
+	border: 1px solid black;
+}
+.passwordsDontMatchClass:invalid {
+	border: 1px solid black;
+}
+.passwordsDontMatchClass:valid {
+	border: 2px solid red;
+}
+
+.forgotButtonInForgot {
+	cursor: pointer;
+	transition: all 0.3s ease-out;
+	font-size: 0.875rem;
+	padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: .5rem;
+	padding-bottom: .5rem;
+  -webkit-appearance: none;
+  font-weight: bold;
+  display: inline-block;
+  border-color: #000;
+  border-style: solid;
+  border-width: 1px;
+	background-color: transparent;
+	margin: auto;
+	margin-top: 20px;
+}
+
+.forgotButtonInForgot:hover {
+	transform: scale(1.05);
+	background-color: black;
+	color: white;
+}
+
+.belowForgotButtonDiv {
+	margin-top: 1rem;
+  line-height: 1.5;
+}
+
+.registerLinkInForgot {
+	opacity: 1;
+  transition: all 0.3s ease-out;
+  font-size: .875rem;
+  color: #000;
+  text-decoration: none;
+  display: block;
+  box-sizing: border-box;
+  cursor: pointer;
+	margin-top: 20px;
+	font-size: 16px;
+}
+.registerLinkInForgot:first-child{
+	margin-top: 0px;
+}
+.registerLinkInForgot:nth-child(2){
+	margin-bottom: -6px;
+	margin-top: -10px;
+}
+
+.registerLinkInForgot:hover {
+	font-weight: bold;
+	transform: scale(1.05);
+}
+
+@media screen and (max-width: 600px) {
+	.forgotArticle {
+		max-width: 94%;
+	}
+
+	.forgotMain {
+		padding: 0.8rem 0;
+	}
+}
