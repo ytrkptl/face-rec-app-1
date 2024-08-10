@@ -1,6 +1,6 @@
-import { jwt } from "../../utils/jwt-helpers.mjs";
-import { setToken, getMultipleValues } from "../../utils/redis-helper.mjs";
-import db from "../../db/index.mjs";
+import { jwt } from "../../utils/jwt-helpers.js";
+import { setToken, getMultipleValues } from "../../utils/redis-helper.js";
+import {db} from "../../db/index.mjs";
 
 //numeric values are interpreted as seconds in jsonwebtoken
 // 900 seconds equals 15 minutes

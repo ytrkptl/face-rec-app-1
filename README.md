@@ -39,10 +39,14 @@ the link above is just for help but do not follow it verbatim.
 
     BEGIN TRANSACTION;
     CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100),
-    email text UNIQUE NOT NULL,
-    joined TIMESTAMP NOT NULL
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100),
+        email text UNIQUE NOT NULL,
+        entries INTEGER DEFAULT '0',
+        pet VARCHAR(255),
+        age INTEGER,
+        handle VARCHAR(255),
+        joined TIMESTAMP NOT NULL,
     );
     COMMIT;
 
