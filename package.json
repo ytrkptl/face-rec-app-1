@@ -1,10 +1,6 @@
 {
   "name": "face-rec-app",
   "version": "1.0.0",
-  "engines": {
-    "node": "v18.16.0",
-    "npm": "8.3.0"
-  },
   "description": "",
   "dependencies": {
     "@sendgrid/mail": "^7.4.4",
