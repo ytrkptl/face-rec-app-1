@@ -23,7 +23,7 @@ const ProfileIcon = ({ profilePhotoUrl, toggleModal, signOut }) => {
           />
         </DropdownToggle>
         <DropdownMenu
-          right
+          end
           className="dropdownMenuStyle"
           /*needed to inject some styles directly*/
           style={{
