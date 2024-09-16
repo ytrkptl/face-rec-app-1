@@ -1,26 +1,27 @@
-import React, {useState, useEffect} from 'react'
-import './Spinner.css';
+import { useState, useEffect } from "react";
+import "./Spinner.css";
 
-const Spinner = ({showSpinner}) => {
-
-  let [displayIt, changeDisplayIt] = useState('none');
+const Spinner = ({ showSpinner }) => {
+  let [displayIt, changeDisplayIt] = useState("none");
 
   useEffect(() => {
     if (showSpinner) {
-      changeDisplayIt('flex')
+      changeDisplayIt("flex");
     } else {
-      changeDisplayIt('none')
+      changeDisplayIt("none");
     }
     return () => {
-      changeDisplayIt('none')
+      changeDisplayIt("none");
     };
-  }, [showSpinner, displayIt, changeDisplayIt])
+  }, [showSpinner, displayIt, changeDisplayIt]);
 
   return (
-    <div className="spinnerOverlay" style={{display: `${displayIt}`}}>
+    <div
+      className="spinnerOverlay"
+      style={{ display: `${displayIt}` }}>
       <div className="spinnerContainer" />
     </div>
   );
-}
+};
 
 export default Spinner;

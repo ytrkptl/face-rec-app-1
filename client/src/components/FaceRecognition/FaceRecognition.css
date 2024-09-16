@@ -1,16 +1,16 @@
 .centerFaceRec {
-	display: flex;
-	justify-content: center;
-	max-width: 100%;
+  display: flex;
+  justify-content: center;
+  max-width: 100%;
 }
 
 .absoluteDiv {
-	/*absolute mt2*/
-	position: absolute;
-	margin: auto;
-	margin-top: 20px;
-	object-fit: contain;
-	max-width: 90%;
+  /*absolute mt2*/
+  position: absolute;
+  margin: auto;
+  margin-top: 20px;
+  object-fit: contain;
+  max-width: 90%;
 }
 
 .bounding-box {

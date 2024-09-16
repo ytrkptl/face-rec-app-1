@@ -17,57 +17,57 @@ const db = require("../db");
 
 router.get("/favicon.ico", (req, res) => res.status(204));
 
-router.get("/", (req, res) => {
+router.get("/api", (req, res) => {
   res.redirect(`${process.env.FRONTEND_URL}`);
 });
 
-router.post("/signin", signin.signinAuthentication(db, bcrypt));
+router.post("/api/signin", signin.signinAuthentication(db, bcrypt));
 
-router.post("/register-step-1", (req, res) =>
+router.post("/api/register-step-1", (req, res) =>
   registerStepOne.handleRegisterWithEmail(db, bcrypt, req, res)
 );
 
-router.post("/register-step-2", (req, res) =>
+router.post("/api/register-step-2", (req, res) =>
   registerStepTwo.registerAuthentication(req, res)
 );
 
-router.post("/forgot", (req, res) => {
+router.post("/api/forgot", (req, res) => {
   forgot.handleForgotPassword(db, req, res);
 });
 
-router.post("/reset", (req, res) => {
+router.post("/api/reset", (req, res) => {
   reset.handleResetId(req, res);
 });
 
-router.post("/update-new-password", (req, res) => {
+router.post("/api/update-new-password", (req, res) => {
   updateNewPassword.handleUpdateNewPassword(req, res, db, bcrypt);
 });
 
-router.get("/profile/:id", auth.requireAuth, (req, res) => {
+router.get("/api/profile/:id", auth.requireAuth, (req, res) => {
   profile.handleProfileGet(req, res, db);
 });
 
-router.post("/profile/:id", auth.requireAuth, (req, res) => {
+router.post("/api/profile/:id", auth.requireAuth, (req, res) => {
   profile.handleProfileUpdate(req, res, db);
 });
 
-router.post("/upload/:id", auth.requireAuth, (req, res) => {
+router.post("/api/upload/:id", auth.requireAuth, (req, res) => {
   profile.handleProfilePhoto(req, res, db);
 });
 
-router.put("/image", auth.requireAuth, (req, res) => {
+router.put("/api/image", auth.requireAuth, (req, res) => {
   image.handleImage(req, res, db);
 });
 
-router.post("/imageurl", auth.requireAuth, (req, res) => {
+router.post("/api/imageurl", auth.requireAuth, (req, res) => {
   image.handleApiCall(req, res);
 });
 
-router.delete("/signout", (req, res) => {
+router.delete("/api/signout", (req, res) => {
   signout.removeAuthToken(req, res);
 });
 
-router.post("/subscribe", (req, res) => {
+router.post("/api/subscribe", (req, res) => {
   subscribe.handleSubscribe(req, res);
 });
 
