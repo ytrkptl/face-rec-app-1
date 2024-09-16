@@ -1,0 +1,58 @@
+.FooterClass {
+  background-color: rgba(0, 0, 0, 0.3);
+  width: 100%;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  padding-bottom: 10px;
+}
+
+.FooterTitle {
+  color: white;
+  display: block;
+  margin-top: 4px;
+  border-bottom: 1px solid white;
+}
+
+.FooterGrid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 4fr 4fr 4fr;
+  margin: 20px;
+  padding-top: 20px;
+  grid-gap: 20px;
+}
+
+.FooterLinkStyle {
+  color: white;
+  text-align: left;
+  display: block;
+  margin-top: 4px;
+  line-height: 1rem;
+}
+
+.FooterLinkStyle:hover {
+  color: white;
+}
+
+.FooterAuthor {
+  font-size: 14px;
+  color: white;
+  width: 100%;
+  padding-top: 30px;
+  border-top: 1px solid white;
+}
+
+@media screen and (max-width: 600px) {
+  .FooterGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media screen and (max-width: 350px) {
+  .FooterGrid {
+    grid-template-columns: 1fr;
+  }
+}
