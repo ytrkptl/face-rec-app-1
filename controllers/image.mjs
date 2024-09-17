@@ -1,12 +1,13 @@
-const Clarifai = require("clarifai");
+import pkg from 'clarifai';
+const { App, FACE_DETECT_MODEL } = pkg;
 
-const app = new Clarifai.App({
+const app = new App({
   apiKey: process.env.CLARIFAI_API_KEY,
 });
 
 const handleApiCall = (req, res) => {
   app.models
-    .predict(Clarifai.FACE_DETECT_MODEL, req.body.input)
+    .predict(FACE_DETECT_MODEL, req.body.input)
     .then((data) => {
       res.json(data);
     })
@@ -31,7 +32,7 @@ const handleImage = async (req, res, db) => {
     });
 };
 
-module.exports = {
+export default {
   handleImage,
   handleApiCall,
 };

@@ -45,8 +45,8 @@ const handleProfilePhoto = (req, res, db) => {
     .catch((err) => res.status(400).json("Error updating handle in db"));
 };
 
-module.exports = {
+export default {
   handleProfileGet,
   handleProfileUpdate,
   handleProfilePhoto,
-};
+}

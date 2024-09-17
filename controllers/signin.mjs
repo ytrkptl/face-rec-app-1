@@ -1,11 +1,14 @@
-const signToken = require("../utils/jwt-helpers").signToken;
-const redisHelper = require("../utils/redis-helper");
+import { signToken } from "../utils/jwt-helpers.mjs";
+import { 
+  setTokenWithEx, 
+  getToken
+} from "../utils/redis-helper.mjs";
 
 const createSession = async (user) => {
   const { email, id } = user;
   try {
     const token = await signToken(email, 900);
-    await redisHelper.setTokenWithEx(token, 900, id);
+    await setTokenWithEx(token, 900, id);
     return { success: "true", userId: id, token, user };
   } catch (error) {
     console.log(`error creating session in signin.js`);
@@ -54,7 +57,7 @@ const checkPassword = async (bcrypt, password, hash) => {
 const getAuthTokenId = async (req, res) => {
   const { authorization } = req.headers;
   try {
-    const reply = await redisHelper.getToken(authorization);
+    const reply = await getToken(authorization);
     if (reply === null) {
       throw new Error("Unauthorized");
     }
@@ -88,6 +91,6 @@ const signinAuthentication = (db, bcrypt) => async (req, res) => {
   }
 };
 
-module.exports = {
-  signinAuthentication,
+export default {
+  signinAuthentication
 };

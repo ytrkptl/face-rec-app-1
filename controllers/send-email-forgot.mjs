@@ -1,9 +1,14 @@
 "use strict";
-const sgMail = require("@sendgrid/mail");
-if (process.env.NODE_ENV !== "production") require("dotenv").config();
+import sgMail from "@sendgrid/mail";
+import dotenv from 'dotenv'
+
+if(process.env.NODE_ENV !== "production") {
+  dotenv.config()
+}
+
 sgMail.setApiKey(process.env.FACE_REC_APP_1_SG_API_KEY);
 
-const handleSendingEmail = (someToken, req, res) => {
+export const handleSendingEmail = (someToken, req, res) => {
   const { yourEmail, name, message } = req.body;
   const msg = {
     to: `${yourEmail}`,
@@ -50,8 +55,4 @@ const handleSendingEmail = (someToken, req, res) => {
       return res.status(200).send(`Your email was sent successfully. Yatrik will
         get back in touch with you as soon as possible. Thanks for your interest.`);
     });
-};
-
-module.exports = {
-  handleSendingEmail,
 };

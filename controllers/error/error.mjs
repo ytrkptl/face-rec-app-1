@@ -16,4 +16,4 @@ const errorHandler = async (error, req, res, next) => {
   });
 };
 
-module.exports = errorHandler;
+export default errorHandler;

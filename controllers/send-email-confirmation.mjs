@@ -1,9 +1,14 @@
 "use strict";
-const sgMail = require("@sendgrid/mail");
-if (process.env.NODE_ENV !== "production") require("dotenv").config();
+import sgMail from "@sendgrid/mail";
+import dotenv from 'dotenv'
+
+if(process.env.NODE_ENV !== "production") {
+  dotenv.config()
+}
+
 sgMail.setApiKey(process.env.FACE_REC_APP_1_SG_API_KEY);
 
-const handleSendingEmailConfirmation = (someToken, req, res) => {
+export const handleSendingEmailConfirmation = (someToken, req, res) => {
   const { email } = req.body;
 
   const msg = {
@@ -52,8 +57,4 @@ const handleSendingEmailConfirmation = (someToken, req, res) => {
         .json(`Something went wrong while sending a message to the email you provided.
                Please use the following email address to contact us about this issue: ${process.env.AUTHOR_EMAIL}`);
     });
-};
-
-module.exports = {
-  handleSendingEmailConfirmation,
 };

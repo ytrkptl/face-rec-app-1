@@ -1,6 +1,6 @@
-const redisHelper = require("../../utils/redis-helper");
-const handleSendingEmail = require("../send-email-forgot").handleSendingEmail;
-const randomIdFunc = require("../../utils/other-helper").getSixDigitCode;
+import { setTokenWithEx } from "../../utils/redis-helper.mjs";
+import { handleSendingEmail } from "../send-email-forgot.mjs";
+import { getSixDigitCode as randomIdFunc } from "../../utils/other-helper.mjs";
 
 /* This method checks to see if yourEmail was provided first, then it
 checks to see if that email exists in database. If yes, sends the user
@@ -21,8 +21,7 @@ const handleForgotPassword = (db, req, res) => {
     .then((user) => {
       if (user[0].id) {
         const randomId = randomIdFunc();
-        redisHelper
-          .setTokenWithEx(yourEmail, 900, randomId)
+        setTokenWithEx(yourEmail, 900, randomId)
           .then((check) => {
             if (check === "OK") {
               handleSendingEmail(randomId, req, res);
@@ -51,6 +50,6 @@ const handleForgotPassword = (db, req, res) => {
     });
 };
 
-module.exports = {
+export default {
   handleForgotPassword,
 };

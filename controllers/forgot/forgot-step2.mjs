@@ -1,4 +1,4 @@
-const redisHelper = require('../../utils/redis-helper');
+import { keyExists, getToken } from '../../utils/redis-helper.mjs';
 
 /*This step gets called during step 2 of forgot password request
 It check whether the yourEmail exists in redis? If yes,
@@ -8,9 +8,9 @@ const handleResetId = (req, res) => {
 
   const { resetId, yourEmail } = req.body;
 
-  redisHelper.keyExists(yourEmail)
+  keyExists(yourEmail)
     .then(ans => {
-      redisHelper.getToken(yourEmail)
+      getToken(yourEmail)
         .then(x => {
           if (x === resetId) {
             return res.status(200).json('Reset Id matches')
@@ -27,6 +27,6 @@ const handleResetId = (req, res) => {
     })
 }
 
-module.exports = {
+export default {
   handleResetId
 }
