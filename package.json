@@ -1,12 +1,12 @@
 {
   "name": "face-rec-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "Api for an application that detects faces in the images you upload to it.",
   "scripts": {
-    "client": "cd client && npm run dev",
+    "frontend": "cd frontend && npm run dev",
     "server": "nodemon server.js",
-    "build": "npm install --only=prod && cd client && npm install --only=prod && npm run build",
-    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
+    "build": "npm install --only=prod && cd frontend && npm install --only=prod && npm run build",
+    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run firebase-dev\" \"npm run dev-local\"",
     "start": "node server.js"
   },
   "keywords": [],
