@@ -1,0 +1,19 @@
+.centerFaceRec {
+	display: flex;
+	justify-content: center;
+	max-width: 100%;
+}
+
+.absoluteDiv {
+	/*absolute mt2*/
+	position: absolute;
+	margin: auto;
+	margin-top: 20px;
+	object-fit: contain;
+	max-width: 90%;
+}
+
+.inputImage {
+  max-width: 100%;
+  margin: auto;
+}
