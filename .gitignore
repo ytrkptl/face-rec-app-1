@@ -73,7 +73,8 @@ db_bk
 routes
 logs
 utils
-controllers
+controllers/*
 !controllers/error/
+!controllers/error/error.js
 .vscode
 sample.txt
