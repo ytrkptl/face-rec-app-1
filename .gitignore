@@ -61,3 +61,18 @@ client/*.sln
 client/*.sw?
 
 client/.env
+
+
+# Ignore all contents from the following directories
+client/
+client_bk
+client2
+db
+db_bk
+0temp-storage
+routes
+logs
+utils
+controllers
+.vscode
+sample.txt

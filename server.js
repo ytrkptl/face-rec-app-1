@@ -4,7 +4,6 @@ const morgan = require("morgan");
 const enforce = require("express-sslify");
 const compression = require("compression");
 const path = require("path");
-const routes = require("./routes");
 const errorHandler = require("./controllers/error/error.js");
 
 if (process.env.NODE_ENV !== "production") require("dotenv").config();
@@ -21,18 +20,35 @@ app.use(cors());
 if (process.env.NODE_ENV === "production") {
   app.use(compression());
   app.use(enforce.HTTPS({ trustProtoHeader: true }));
-  app.use(express.static(path.join(__dirname, "client/build")));
+  app.use(express.static(path.join(__dirname, "frontend/dist")));
 
   app.get("*", function (req, res) {
-    res.sendFile(path.join(__dirname, "client/build", "index.html"));
+    res.sendFile(path.join(__dirname, "frontend/dist", "index.html"));
   });
 }
 
-app.get("/service-worker.js", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "..", "build", "service-worker.js"));
-});
+// create a route for ${baseURL}/api/rank-me?entries=${entries}`
+app.get("/api/rank-me", (req, res, next) => {
+  try {
+    const entries = parseInt(req.query.entries);
 
-app.use(routes);
+    if (isNaN(entries)) {
+      throw new Error("Invalid entries parameter");
+    }
+
+    const emojis = ["😄", "😃", "😀", "😊", "😉", "😍", "🔶", "🔷", "🚀"];
+
+    const rank = entries >= emojis.length ? emojis.length - 1 : entries - 1;
+    const emoji = emojis[rank];
+
+    res.json({
+      message: "Rank generated!",
+      input: emoji,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 // error Handler middlerware. Must keep it down here at the very end before app.listen
 app.use((req, res, next) => {
