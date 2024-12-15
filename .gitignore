@@ -80,3 +80,5 @@ controllers/*
 !controllers/error/error.js
 .vscode
 sample.txt
+public/dist
+public

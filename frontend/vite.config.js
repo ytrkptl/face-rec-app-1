@@ -6,6 +6,11 @@ import { fileURLToPath, URL } from "node:url";
 export default defineConfig(async () => {
   return {
     plugins: [react()],
+    build: {
+      outDir: "../public/dist",
+      emptyOutDir: true,
+      manifest: true
+    },
     server: {
       proxy: {
         "/api": {
