@@ -20,10 +20,10 @@ app.use(cors());
 if (process.env.NODE_ENV === "production") {
   app.use(compression());
   app.use(enforce.HTTPS({ trustProtoHeader: true }));
-  app.use(express.static(path.join(__dirname, "frontend/dist")));
+  app.use(express.static(path.join(__dirname, "public/dist")));
 
   app.get("*", function (req, res) {
-    res.sendFile(path.join(__dirname, "frontend/dist", "index.html"));
+    res.sendFile(path.join(__dirname, "public/dist", "index.html"));
   });
 }
 
