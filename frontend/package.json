@@ -3,9 +3,6 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "engines": {
-    "node": "22"
-  },
   "scripts": {
     "dev-without-api": "concurrently --kill-others-on-fail \"npm run firebase-dev\" \"npm run dev-local\"",
     "dev-local": "vite",
