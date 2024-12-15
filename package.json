@@ -7,7 +7,9 @@
     "server": "nodemon server.js",
     "build": "npm install --only=prod && cd frontend && npm install --only=prod && npm run build",
     "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run firebase-dev\" \"npm run dev-local\"",
-    "start": "node server.js"
+    "start": "node server.js",
+    "firebase-dev": "cd frontend && npm run firebase-dev",
+    "dev-local": "cd frontend && npm run dev-local"
   },
   "keywords": [],
   "author": "",
