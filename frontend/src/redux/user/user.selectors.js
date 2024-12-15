@@ -1,0 +1,9 @@
+export const selectUserUid = (state) => state.user.uid;
+export const selectUserName = (state) => state.user.displayName;
+export const selectUserEmail = (state) => state.user.email;
+export const selectUserEntries = (state) => state.user.entries;
+export const selectUserJoined = (state) => state.user.joined;
+export const selectUserPet = (state) => state.user.pet;
+export const selectUserAge = (state) => state.user.age;
+export const selectUserHandle = (state) => state.user.handle;
+export const selectUserProfilePhotoUrl = (state) => state.user.profilePhotoUrl;
