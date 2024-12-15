@@ -74,5 +74,6 @@ routes
 logs
 utils
 controllers
+!controllers/error/
 .vscode
 sample.txt
