@@ -82,3 +82,9 @@ controllers/*
 sample.txt
 public/dist
 public
+
+Dockerfile.dev
+Dockerfile.prod
+Dockerfile.dev-with-emulators
+docker-compose.yml
+custom-error-messages.txt
