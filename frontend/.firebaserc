@@ -1,9 +1,0 @@
-{
-	"projects": {
-		"default": "ci4-face-rec-app-nov2024",
-		"development": "ci4-face-rec-app-nov2024",
-		"production": "face-detect-production"
-	},
-	"targets": {},
-	"etags": {}
-}
