@@ -7,7 +7,7 @@ export default defineConfig(async () => {
   return {
     plugins: [react()],
     build: {
-      outDir: "../public/dist",
+      outDir: "./dist",
       emptyOutDir: true,
       manifest: true
     },
