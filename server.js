@@ -5,6 +5,7 @@ const enforce = require("express-sslify");
 const compression = require("compression");
 const errorHandler = require("./controllers/error/error.js");
 const { setUpCors, logCors } = require("./middlewares/setUpCors");
+const { default: helmet } = require("helmet");
 
 if (process.env.NODE_ENV !== "production") require("dotenv").config();
 
@@ -15,12 +16,7 @@ const port = process.env.PORT || 5000;
 app.use(morgan("combined"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
-
-if (process.env.NODE_ENV === "production") {
-  app.use(compression());
-  app.use(enforce.HTTPS({ trustProtoHeader: true }));
-}
+app.use(helmet());
 
 // middleware for serving favicons https://expressjs.com/en/resources/middleware/serve-favicon.html
 process.env.NODE_ENV !== "production" && app.use(logSession);
@@ -28,6 +24,11 @@ process.env.NODE_ENV !== "production" && app.use(logSession);
 // set up corsOptions
 app.use(setUpCors);
 process.env.NODE_ENV !== "production" && app.use(logCors);
+
+if (process.env.NODE_ENV === "production") {
+  app.use(compression());
+  app.use(enforce.HTTPS({ trustProtoHeader: true }));
+}
 
 // create a route for ${baseURL}/api/rank-me?entries=${entries}`
 app.get("/api/rank-me", (req, res, next) => {
