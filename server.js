@@ -17,16 +17,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-if (process.env.NODE_ENV === "production") {
-  app.use(compression());
-  app.use(enforce.HTTPS({ trustProtoHeader: true }));
-  app.use(express.static(path.join(__dirname, "public/dist")));
-
-  app.get("*", function (req, res) {
-    res.sendFile(path.join(__dirname, "public/dist", "index.html"));
-  });
-}
-
 // create a route for ${baseURL}/api/rank-me?entries=${entries}`
 app.get("/api/rank-me", (req, res, next) => {
   try {
