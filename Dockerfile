@@ -13,6 +13,16 @@ RUN npm install
 # Copy frontend source to the current directory, which should be /usr/src/app
 COPY frontend/ .
 
+# Build arguments
+ARG VITE_FILESTACK_API_KEY
+ARG VITE_FIREBASE_API_KEY
+ARG VITE_FIREBASE_AUTH_DOMAIN
+ARG VITE_FIREBASE_PROJECT_ID
+ARG VITE_FIREBASE_STORAGE_BUCKET
+ARG VITE_FIREBASE_MESSAGING_SENDER_ID
+ARG VITE_FIREBASE_APP_ID
+ARG VITE_PROD_BASE_URL
+
 # Build with environment variables
 ENV VITE_FILESTACK_API_KEY=${VITE_FILESTACK_API_KEY}
 ENV VITE_FIREBASE_API_KEY=${VITE_FIREBASE_API_KEY}
@@ -38,7 +48,7 @@ RUN npm install
 
 # Copy backend source
 COPY server.js ./
-COPY controllers/ ./controllers/
+COPY controllers/error/error.js ./controllers/error/
 
 # Create public/dist directory and copy built frontend
 RUN mkdir -p public/dist
