@@ -83,6 +83,7 @@ sample.txt
 public/dist
 public
 
+Dockerfile
 Dockerfile.dev
 Dockerfile.prod
 Dockerfile.dev-with-emulators
