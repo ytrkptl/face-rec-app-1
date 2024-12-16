@@ -1,13 +1,11 @@
+if (process.env.NODE_ENV !== "production") require("dotenv").config();
 const express = require("express");
-const cors = require("cors");
 const morgan = require("morgan");
 const enforce = require("express-sslify");
 const compression = require("compression");
 const errorHandler = require("./controllers/error/error.js");
 const { setUpCors, logCors } = require("./middlewares/setUpCors");
-const { default: helmet } = require("helmet");
-
-if (process.env.NODE_ENV !== "production") require("dotenv").config();
+const helmet = require("helmet");
 
 const app = express();
 const port = process.env.PORT || 5000;
