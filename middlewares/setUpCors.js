@@ -16,7 +16,28 @@ if (process.env.NODE_ENV === "test") {
   whitelist = ["http://localhost:3000", "http://localhost:3001"];
 }
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV !== "production") {
+  const allowedTokens = [];
+  corsOptionsDelegate = function (req, callback) {
+    let origin = req.header("Origin");
+    if (whitelist.indexOf(origin) !== -1) {
+      corsOptions = { origin: true };
+    } else if (!origin) {
+      let authorization = req.headers.authorization;
+      let token = authorization?.slice(7, authorization.length);
+      if (allowedTokens.includes(token)) {
+        corsOptions = { origin: true };
+      } else {
+        corsOptions = { origin: false };
+        return callback(new Error("Not allowed by CORS"), corsOptions);
+      }
+    } else {
+      corsOptions = { origin: false };
+      return callback(new Error("Not allowed by CORS"), corsOptions);
+    }
+    callback(null, corsOptions);
+  };
+} else {
   whitelist = [
     "https://face-rec-app-client.netlfiy.app",
     "https://www.face-rec-app-client.netlfiy.app",
@@ -27,7 +48,7 @@ if (process.env.NODE_ENV === "production") {
   corsOptionsDelegate = function (req, callback) {
     let origin = req.header("Origin");
     if (whitelist.indexOf(origin) !== -1) {
-      corsOptions = { origin: true }; // reflect (enable) the requested origin in the CORS response
+      corsOptions = { origin: true };
     } else if (!origin) {
       let authorization = req.headers.authorization;
       let token = authorization?.slice(7, authorization.length);
@@ -35,17 +56,17 @@ if (process.env.NODE_ENV === "production") {
         if (token && allowedTokens.includes(token)) {
           corsOptions = { origin: true };
         } else {
-          corsOptions = { origin: false }; // disable CORS for this request
-          callback(new Error("Not allowed by CORS"));
+          corsOptions = { origin: false };
+          return callback(new Error("Not allowed by CORS"), corsOptions);
         }
       } else {
         corsOptions = { origin: true };
       }
     } else {
-      corsOptions = { origin: false }; // disable CORS for this request
-      callback(new Error("Not allowed by CORS"));
+      corsOptions = { origin: false };
+      return callback(new Error("Not allowed by CORS"), corsOptions);
     }
-    callback(null, corsOptions); // callback expects two parameters: error and options
+    callback(null, corsOptions);
   };
 }
 
