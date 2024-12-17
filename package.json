@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "Api for an application that detects faces in the images you upload to it.",
   "scripts": {
-    "frontend": "cd frontend && npm run dev",
-    "server": "nodemon server.js",
-    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run firebase-dev\" \"npm run dev-local\"",
+    "dev": "nodemon server.js",
     "start": "node server.js"
   },
   "keywords": [],

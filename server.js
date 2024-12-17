@@ -17,7 +17,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
 
 // middleware for serving favicons https://expressjs.com/en/resources/middleware/serve-favicon.html
-process.env.NODE_ENV !== "production" && app.use(logSession);
 
 // set up corsOptions
 app.use(setUpCors);
