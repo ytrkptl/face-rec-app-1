@@ -39,8 +39,8 @@ if (process.env.NODE_ENV !== "production") {
   };
 } else {
   whitelist = [
-    "https://face-rec-app-client.netlfiy.app",
-    "https://www.face-rec-app-client.netlfiy.app",
+    "https://face-rec-app.yatrik.dev",
+    "https://www.face-rec-app.yatrik.dev",
     "https://www.yatrik.dev",
     "https://yatrik.dev",
   ];
