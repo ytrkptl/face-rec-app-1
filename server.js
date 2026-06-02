@@ -1,7 +1,6 @@
 if (process.env.NODE_ENV !== "production") require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
-const enforce = require("express-sslify");
 const compression = require("compression");
 const errorHandler = require("./controllers/error/error.js");
 const { setUpCors, logCors } = require("./middlewares/setUpCors");
@@ -24,7 +23,6 @@ process.env.NODE_ENV !== "production" && app.use(logCors);
 
 if (process.env.NODE_ENV === "production") {
   app.use(compression());
-  app.use(enforce.HTTPS({ trustProtoHeader: true }));
 }
 
 // create a route for ${baseURL}/api/rank-me?entries=${entries}`
