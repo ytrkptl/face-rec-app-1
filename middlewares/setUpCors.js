@@ -43,6 +43,10 @@ if (process.env.NODE_ENV !== "production") {
     "https://www.face-rec-app.yatrik.dev",
     "https://www.yatrik.dev",
     "https://yatrik.dev",
+    "https://face-rec-app.yatrikpatel.com",
+    "https://www.face-rec-app.yatrikpatel.com",
+    "https://www.yatrikpatel.com",
+    "https://yatrikpatel.com",
   ];
   const allowedTokens = [];
   corsOptionsDelegate = function (req, callback) {
